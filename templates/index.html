@@ -3,39 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minha Aplicação Django</title>
+    <title>Portal de Notícias</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+        }
+
+        .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
         }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
+
+        header {
+            background-color: #ffffff;
+            padding: 1rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
+            margin-bottom: 2rem;
             text-align: center;
         }
-        .time-display {
-            text-align: center;
-            color: #666;
-            font-size: 1.2em;
-            margin-top: 20px;
+
+        .noticias-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .noticia-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .noticia-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .noticia-imagem {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .noticia-conteudo {
+            padding: 1.5rem;
+        }
+
+        .noticia-titulo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1c1e21;
+        }
+
+        .noticia-texto {
+            color: #65676b;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .noticia-data {
+            color: #8e8e8e;
+            font-size: 0.875rem;
+        }
+
+        .noticia-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #1877f2;
+            text-decoration: none;
+        }
+
+        .noticia-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .noticia-card {
+                margin-bottom: 1rem;
+            }
+
+            .noticia-imagem {
+                height: 180px;
+            }
+        }
+
+        /* Estilos para paginação */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+        
+        .pagination a, .pagination span {
+            padding: 8px 16px;
+            border-radius: 4px;
+            background: white;
+            color: #1877f2;
+            text-decoration: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .pagination .current {
+            background: #1877f2;
+            color: white;
+        }
+        
+        /* Skeleton loading */
+        @keyframes shimmer {
+            0% { background-position: -468px 0 }
+            100% { background-position: 468px 0 }
+        }
+        
+        .skeleton {
+            background: #f6f7f8;
+            background-image: linear-gradient(
+                to right,
+                #f6f7f8 0%,
+                #edeef1 20%,
+                #f6f7f8 40%,
+                #f6f7f8 100%
+            );
+            background-repeat: no-repeat;
+            background-size: 800px 104px;
+            animation: shimmer 1s linear infinite;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Portal de Notícias</h1>
+    </header>
+
     <div class="container">
-        <h1>Bem-vindo ao Django no Vercel!</h1>
-        <div class="time-display">
-            <p>Horário atual: {{ now }}</p>
+        <div class="noticias-grid">
+            {% for noticia in noticias %}
+            <article class="noticia-card">
+                {% if noticia.imagem %}
+                <img src="{{ noticia.imagem_base64 }}" 
+                     alt="{{ noticia.titulo }}" 
+                     class="noticia-imagem"
+                     loading="lazy">
+                {% endif %}
+                <div class="noticia-conteudo">
+                    <h2 class="noticia-titulo">{{ noticia.titulo }}</h2>
+                    <p class="noticia-texto">{{ noticia.texto|truncatewords:30 }}</p>
+                    <div class="noticia-data">
+                        {{ noticia.data_publicacao|date:"d/m/Y H:i" }}
+                    </div>
+                    {% if noticia.links %}
+                    <a href="{{ noticia.links }}" class="noticia-link" target="_blank">
+                        Leia mais
+                    </a>
+                    {% endif %}
+                </div>
+            </article>
+            {% empty %}
+            <p>Nenhuma notícia disponível no momento.</p>
+            {% endfor %}
         </div>
+
+        <!-- Paginação -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Primeira</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span class="current">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
+
+    <!-- Script para loading progressivo -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar classe skeleton durante o carregamento
+            const cards = document.querySelectorAll('.noticia-card');
+            cards.forEach(card => {
+                if (!card.querySelector('img')) {
+                    card.classList.add('skeleton');
+                }
+            });
+
+            // Remover classe skeleton após carregamento
+            window.addEventListener('load', function() {
+                cards.forEach(card => {
+                    card.classList.remove('skeleton');
+                });
+            });
+        });
+    </script>
 </body>
 </html> 
