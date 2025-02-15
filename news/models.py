@@ -1,7 +1,7 @@
 from django.db import models
 
 class Noticia(models.Model):
-    titulo = models.CharField(max_length=200)
+    titulo = models.TextField()
     texto = models.TextField()
     links = models.URLField(max_length=500, blank=True, null=True)
     imagem = models.BinaryField(blank=True, null=True)

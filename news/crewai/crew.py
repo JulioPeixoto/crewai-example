@@ -156,7 +156,7 @@ class NewsCrew:
             crew = Crew(
                 agents=list(self.agents.values()),
                 tasks=self.tasks,
-                verbose=True
+                verbose=False
             )
             logger.debug("Crew configurada, iniciando kickoff")
             result = crew.kickoff()
