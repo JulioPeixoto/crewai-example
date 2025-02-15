@@ -4,14 +4,15 @@ from typing import List
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
+from api.settings import MODEL
 
 load_dotenv()
 
 class TitleGenerator:
     def __init__(self):
         self.model = ChatOpenAI(
-            model="gpt-3.5-turbo",
-            temperature=0.7,
+            model=MODEL,
+            temperature=0.6,
             api_key=os.getenv("OPENAI_API_KEY")
         )
         

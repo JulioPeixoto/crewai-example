@@ -34,13 +34,13 @@
 
         <div class="noticias-grid">
             {% for noticia in noticias %}
-            <article class="noticia-card markdown-body">
+            <article class="noticia-card">
                 <h2 class="noticia-titulo">{{ noticia.titulo }}</h2>
                 <div class="noticia-conteudo">
                     {{ noticia.texto|safe }}
                 </div>
                 <div class="noticia-data">
-                    {{ noticia.data_publicacao|date:"d/m/Y H:i" }}
+                    {{ noticia.data_publicacao|date:"d/m/Y" }}
                 </div>
             </article>
             {% empty %}

@@ -16,6 +16,7 @@ from .crewai.crew import NewsCrew
 from .langchain import TitleGenerator
 
 logger = logging.getLogger(__name__)
+
 @cache_page(60 * 15)
 def index(request):
     page_number = request.GET.get("page", 1)
@@ -34,49 +35,35 @@ def index(request):
             imagem_base64 = base64.b64encode(noticia.imagem).decode("utf-8")
             noticia.imagem_base64 = f"data:{noticia.tipo_imagem};base64,{imagem_base64}"
 
-    context = {
+    return render(request, "index.html", {
         "noticias": noticias,
         "page_obj": noticias,
-    }
-    return render(request, "index.html", context)
+    })
 
 
 def gerar_noticias(request):
     if request.method == "POST":
         try:
             news_crew = NewsCrew()
-            crew_results = news_crew.run()
-            logger.info(f"Tipo do crew_results: {type(crew_results)}")
-            logger.info(f"Conteúdo do crew_results: {crew_results}")
-            
+            crew_results = news_crew.run()            
             title_generator = TitleGenerator()
 
             if not crew_results:
-                logger.error("crew_results está vazio")
                 raise ValueError("Nenhum resultado gerado pelos agentes")
 
-            # Garantir que crew_results seja uma lista
             if isinstance(crew_results, (str, tuple)):
                 crew_results = [crew_results]
             
-            for i, result in enumerate(crew_results):
-                logger.info(f"Processando resultado {i+1}")
-                logger.info(f"Tipo do resultado: {type(result)}")
-                
-                # Se o resultado for uma tupla, pegar o primeiro elemento
+            for result in crew_results:
                 if isinstance(result, tuple):
                     result = result[0]
-                
-                logger.info(f"Conteúdo do resultado: {result[:200]}...")
                 
                 content_lines = result.split("\n")
                 content_without_title = "\n".join(content_lines[1:]) if content_lines else ""
                 
-                titulo = title_generator.create_title(content_without_title)
-                logger.info(f"Título gerado: {titulo}")
-                
+                titulo_response = title_generator.create_title(content_without_title)
+                titulo = titulo_response.content if hasattr(titulo_response, 'content') else str(titulo_response)
                 html_content = markdown2.markdown(content_without_title)
-                logger.info(f"HTML gerado: {html_content[:200]}...")
 
                 try:
                     noticia = Noticia.objects.create(
@@ -84,15 +71,14 @@ def gerar_noticias(request):
                         texto=html_content,
                         data_publicacao=timezone.now()
                     )
-                    logger.info(f"Notícia salva com sucesso. ID: {noticia.id}")
+                    logger.info(f"Notícia salva com ID: {noticia.id}")
                 except Exception as db_error:
                     logger.error(f"Erro ao salvar no banco: {str(db_error)}")
-                    logger.error(f"Dados da tentativa - Título: {titulo}, Texto: {html_content}")
                     raise
 
             messages.success(request, "Notícias geradas com sucesso!")
         except Exception as e:
-            logger.error(f"Erro geral: {str(e)}", exc_info=True)
+            logger.error(f"Erro: {str(e)}", exc_info=True)
             messages.error(request, f"Erro ao gerar notícias: {str(e)}")
 
         return redirect("index")

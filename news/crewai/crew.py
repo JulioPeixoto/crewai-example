@@ -1,11 +1,14 @@
 import yaml
 import os
+import time
+from typing import ClassVar
 from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
 from langchain_community.tools import DuckDuckGoSearchRun
 from crewai.tools import BaseTool
 import logging
 from pprint import pformat
+from duckduckgo_search.exceptions import DuckDuckGoSearchException
 
 # Configuração do logger do Django
 logger = logging.getLogger(__name__)
@@ -15,17 +18,29 @@ load_dotenv()
 class DuckDuckGoSearchWrapper(BaseTool):
     name: str = "Web Search"
     description: str = "Pesquisa na web usando DuckDuckGo"
+    max_retries: ClassVar[int] = 3
+    delay_between_retries: ClassVar[int] = 2
 
     def _run(self, query: str) -> str:
-        try:
-            logger.debug(f"Executando pesquisa: {query}")
-            search = DuckDuckGoSearchRun()
-            result = search.run(query)
-            logger.debug(f"Resultado da pesquisa: {result[:200]}...")
-            return result
-        except Exception as e:
-            logger.error(f"Erro na pesquisa DuckDuckGo: {str(e)}", exc_info=True)
-            raise
+        for attempt in range(self.max_retries):
+            try:
+                search = DuckDuckGoSearchRun()
+                result = search.run(query)
+                return result
+            
+            except DuckDuckGoSearchException as e:
+                if "Ratelimit" in str(e):
+                    if attempt < self.max_retries - 1:
+                        wait_time = self.delay_between_retries * (attempt + 1)
+                        logger.warning(f"Rate limit atingido. Aguardando {wait_time} segundos antes de tentar novamente...")
+                        time.sleep(wait_time)
+                        continue
+                logger.error(f"Erro de rate limit após {self.max_retries} tentativas")
+                raise
+            except Exception as e:
+                logger.error(f"Erro na pesquisa DuckDuckGo: {str(e)}", exc_info=True)
+                raise
+
 
 class NewsCrew:
     def __init__(self):
@@ -102,23 +117,13 @@ class NewsCrew:
             logger.debug(f"Conteúdo de tasks_config: \n{pformat(self.tasks_config)}")
             
             # Primeiro cria todas as tarefas
-            for task_config in self.tasks_config['tasks']:
-                logger.debug(f"Processando tarefa: {pformat(task_config)}")
-                
-                if not isinstance(task_config, dict):
-                    logger.warning(f"Tarefa ignorada - formato inválido. Tipo: {type(task_config)}, Valor: {task_config}")
-                    continue
-                
+            for task_config in self.tasks_config['tasks']:                
                 agent = self.agents.get(task_config['agent'])
-                if not agent:
-                    logger.warning(f"Tarefa ignorada - agente '{task_config['agent']}' não encontrado. Agentes disponíveis: {list(self.agents.keys())}")
-                    continue
                     
                 task_tools = []
                 for tool in task_config.get('tools', []):
                     if tool in self.tools:
                         task_tools.append(self.tools[tool])
-                        logger.debug(f"Ferramenta '{tool}' adicionada à tarefa")
                     else:
                         logger.warning(f"Ferramenta '{tool}' não encontrada. Ferramentas disponíveis: {list(self.tools.keys())}")
                 
@@ -133,7 +138,6 @@ class NewsCrew:
                 self.tasks_map[task_config['id']] = task  
                 self.tasks.append(task)
             
-            # Agora configura os contextos
             for task_config, task in zip(self.tasks_config['tasks'], self.tasks):
                 context_ids = task_config.get('context', [])
                 if isinstance(context_ids, str):
@@ -158,11 +162,9 @@ class NewsCrew:
                 tasks=self.tasks,
                 verbose=False
             )
-            logger.debug("Crew configurada, iniciando kickoff")
             result = crew.kickoff()
-            logger.info("Execução da crew finalizada com sucesso")
-            logger.debug(f"Resultado: {result}...")
             return result
+        
         except Exception as e:
             logger.error(f"Erro durante a execução da crew: {str(e)}", exc_info=True)
-            raise
+            raise e
