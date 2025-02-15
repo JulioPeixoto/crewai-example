@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal de Notícias</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Adicione um CSS para estilizar o markdown -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
 </head>
 <body>
     <header>
@@ -15,24 +17,13 @@
     <div class="container">
         <div class="noticias-grid">
             {% for noticia in noticias %}
-            <article class="noticia-card">
-                {% if noticia.imagem %}
-                <img src="{{ noticia.imagem_base64 }}" 
-                     alt="{{ noticia.titulo }}" 
-                     class="noticia-imagem"
-                     loading="lazy">
-                {% endif %}
+            <article class="noticia-card markdown-body">
+                <h2 class="noticia-titulo">{{ noticia.titulo }}</h2>
                 <div class="noticia-conteudo">
-                    <h2 class="noticia-titulo">{{ noticia.titulo }}</h2>
-                    <p class="noticia-texto">{{ noticia.texto|truncatewords:30 }}</p>
-                    <div class="noticia-data">
-                        {{ noticia.data_publicacao|date:"d/m/Y H:i" }}
-                    </div>
-                    {% if noticia.links %}
-                    <a href="{{ noticia.links }}" class="noticia-link" target="_blank">
-                        Leia mais
-                    </a>
-                    {% endif %}
+                    {{ noticia.texto|safe }}
+                </div>
+                <div class="noticia-data">
+                    {{ noticia.data_publicacao|date:"d/m/Y H:i" }}
                 </div>
             </article>
             {% empty %}

@@ -1,0 +1,26 @@
+tasks:
+  - name: "Pesquisar Notícias do Dia"
+    agent: news_researcher
+    description: "Pesquisar as 5 notícias mais relevantes de tecnologia do dia"
+    expected_output: "Lista com 5 notícias relevantes, incluindo fontes e principais pontos"
+    tools:
+      - "web_search"
+
+  - name: "Pesquisa de Tendências"
+    agent: news_researcher
+    description: "Identificar tendências emergentes em tecnologia"
+    expected_output: "Relatório sobre tendências tecnológicas atuais e emergentes"
+    tools:
+      - "web_search"
+
+  - name: "Redigir Notícias"
+    agent: news_writer
+    description: "Criar artigos completos para cada uma das 5 notícias identificadas em formato markdown"
+    expected_output: "5 artigos em markdown com: # Título\n\nTexto da notícia\n\nData: [data_publicacao]"
+    context: "Usar as informações fornecidas pelo pesquisador e formatar em markdown"
+
+  - name: "Revisar Conteúdo"
+    agent: editor
+    description: "Revisar e editar os artigos produzidos mantendo a formatação markdown"
+    expected_output: "Artigos revisados em markdown"
+    context: "Verificar precisão, clareza e estilo dos artigos mantendo a formatação"
