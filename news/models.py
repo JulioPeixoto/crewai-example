@@ -1,7 +1,6 @@
 from django.db import models
 
 class Noticia(models.Model):
-    titulo = models.TextField()
     texto = models.TextField()
     links = models.URLField(max_length=500, blank=True, null=True)
     imagem = models.BinaryField(blank=True, null=True)
@@ -15,4 +14,4 @@ class Noticia(models.Model):
         ordering = ['-data_publicacao']
 
     def __str__(self):
-        return self.titulo 
+        return self.texto 

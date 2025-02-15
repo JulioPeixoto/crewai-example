@@ -19,8 +19,8 @@ body {
 
 header {
     border-bottom: 1px solid #e2e2e2;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
     text-align: center;
 }
 
@@ -46,6 +46,39 @@ header h1 {
 .noticia-conteudo {
     max-width: 800px;
     margin: 0 auto;
+    padding: 20px;
+}
+
+.noticia-conteudo h1 {
+    font-family: 'Georgia', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 2rem 0 1rem;
+    color: #121212;
+    line-height: 1.2;
+}
+
+.noticia-conteudo p {
+    font-family: 'Georgia', serif;
+    color: #333;
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.noticia-conteudo hr {
+    border: none;
+    border-top: 1px solid #e2e2e2;
+    margin: 2rem 0;
+}
+
+.noticia-conteudo code {
+    display: none;  /* Ocultar os blocos de código */
+}
+
+/* Remover a data que vem no markdown */
+.noticia-conteudo p:last-child {
+    display: none;
 }
 
 .noticia-titulo {
