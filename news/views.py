@@ -61,6 +61,7 @@ def gerar_noticias(request):
 
             messages.success(request, "Notícias geradas com sucesso!")
         except Exception as e:
+            print(e)
             messages.error(request, f"Erro ao gerar notícias: {str(e)}")
 
         return redirect("index")

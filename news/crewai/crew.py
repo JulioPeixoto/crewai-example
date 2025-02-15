@@ -3,8 +3,18 @@ import os
 from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
 from langchain_community.tools import DuckDuckGoSearchRun
+from crewai.tools import BaseTool
 
 load_dotenv()
+
+class DuckDuckGoSearchWrapper(BaseTool):
+    name: str = "Web Search"
+    description: str = "Pesquisa na web usando DuckDuckGo"
+
+    def _run(self, query: str) -> str:
+        search = DuckDuckGoSearchRun()
+        return search.run(query)
+    
 
 class NewsCrew:
     def __init__(self):
@@ -24,7 +34,7 @@ class NewsCrew:
             self.tasks_config = yaml.safe_load(f)
 
     def setup_tools(self):
-        search = DuckDuckGoSearchRun()
+        search = DuckDuckGoSearchWrapper()
         self.tools = {
             'web_search': search
         }
@@ -35,10 +45,11 @@ class NewsCrew:
             self.agents[agent_id] = Agent(
                 name=config['name'],
                 role=config['role'],
-                goal=config['goals'],
+                goal=config['goal'],
                 backstory=config['backstory'],
                 verbose=True,
-                allow_delegation=False
+                allow_delegation=False,
+                tools=[self.tools['web_search']]
             )
 
     def setup_tasks(self):
