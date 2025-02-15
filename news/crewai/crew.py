@@ -29,6 +29,7 @@ class DuckDuckGoSearchWrapper(BaseTool):
 
 class NewsCrew:
     def __init__(self):
+        self.tasks_map = {}
         try:
             logger.info("Iniciando NewsCrew")
             self.load_config()
@@ -95,46 +96,54 @@ class NewsCrew:
 
     def setup_tasks(self):
         self.tasks = []
+        self.tasks_map = {} 
         try:
             logger.debug(f"Iniciando configuração das tarefas. Tipo de tasks_config: {type(self.tasks_config)}")
             logger.debug(f"Conteúdo de tasks_config: \n{pformat(self.tasks_config)}")
             
-            for task in self.tasks_config['tasks']:
-                logger.debug(f"Processando tarefa: {pformat(task)}")
+            # Primeiro cria todas as tarefas
+            for task_config in self.tasks_config['tasks']:
+                logger.debug(f"Processando tarefa: {pformat(task_config)}")
                 
-                if not isinstance(task, dict):
-                    logger.warning(f"Tarefa ignorada - formato inválido. Tipo: {type(task)}, Valor: {task}")
+                if not isinstance(task_config, dict):
+                    logger.warning(f"Tarefa ignorada - formato inválido. Tipo: {type(task_config)}, Valor: {task_config}")
                     continue
                 
-                agent = self.agents.get(task['agent'])
+                agent = self.agents.get(task_config['agent'])
                 if not agent:
-                    logger.warning(f"Tarefa ignorada - agente '{task['agent']}' não encontrado. Agentes disponíveis: {list(self.agents.keys())}")
+                    logger.warning(f"Tarefa ignorada - agente '{task_config['agent']}' não encontrado. Agentes disponíveis: {list(self.agents.keys())}")
                     continue
                     
                 task_tools = []
-                for tool in task.get('tools', []):
+                for tool in task_config.get('tools', []):
                     if tool in self.tools:
                         task_tools.append(self.tools[tool])
                         logger.debug(f"Ferramenta '{tool}' adicionada à tarefa")
                     else:
                         logger.warning(f"Ferramenta '{tool}' não encontrada. Ferramentas disponíveis: {list(self.tools.keys())}")
                 
-                context = task.get('context', [])
-                
-                if isinstance(context, str):
-                    context = [context]
-                    logger.debug("Contexto convertido de string para lista")
-                elif not isinstance(context, list):
-                    context = []
-                    logger.debug("Contexto inválido convertido para lista vazia")
-                
-                self.tasks.append(Task(
-                    description=task['description'],
+                task = Task(
+                    description=task_config['description'],
                     agent=agent,
-                    expected_output=task['expected_output'],
+                    expected_output=task_config['expected_output'],
                     tools=task_tools,
-                    context=context
-                ))
+                    context=[]  # Contexto inicial vazio
+                )
+                
+                self.tasks_map[task_config['id']] = task  
+                self.tasks.append(task)
+            
+            # Agora configura os contextos
+            for task_config, task in zip(self.tasks_config['tasks'], self.tasks):
+                context_ids = task_config.get('context', [])
+                if isinstance(context_ids, str):
+                    context_ids = [context_ids]
+                    
+                task.context = [
+                    self.tasks_map[ctx_id] 
+                    for ctx_id in context_ids 
+                    if ctx_id in self.tasks_map
+                ]
             
             logger.info(f"Total de {len(self.tasks)} tarefas configuradas")
         except Exception as e:
@@ -147,7 +156,7 @@ class NewsCrew:
             crew = Crew(
                 agents=list(self.agents.values()),
                 tasks=self.tasks,
-                verbose=2
+                verbose=True
             )
             logger.debug("Crew configurada, iniciando kickoff")
             result = crew.kickoff()
