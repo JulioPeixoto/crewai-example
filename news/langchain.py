@@ -34,13 +34,4 @@ class TitleGenerator:
     def create_title(self, text: str) -> str:
         chain = self.prompt | self.model
         return chain.invoke({"text": text})
-
-    def create_titles(self, news_list: List[str]) -> List[str]:
-        """Gera títulos para uma lista de notícias"""
-        titles = []
-        for news in news_list:
-            title = self.create_title(news)
-            # Extrai apenas o conteúdo da resposta do modelo
-            title = title.content.strip()
-            titles.append(title)
-        return titles 
+    
