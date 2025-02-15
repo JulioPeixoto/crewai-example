@@ -50,9 +50,7 @@ def gerar_noticias(request):
             for result in crew_results:
                 content_lines = result.split("\n")
                 content_without_title = "\n".join(content_lines[1:]) if content_lines else ""
-                
                 titulo = title_generator.create_title(content_without_title)
-                
                 html_content = markdown2.markdown(content_without_title)
 
                 Noticia.objects.create(

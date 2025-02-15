@@ -1,5 +1,5 @@
 import yaml
-
+import os
 from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
 from langchain_community.tools import DuckDuckGoSearchRun
@@ -14,9 +14,13 @@ class NewsCrew:
         self.setup_tasks()
 
     def load_config(self):
-        with open('config/agents.yml', 'r') as f:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        agents_path = os.path.join(base_path, 'config', 'agents.yml')
+        tasks_path = os.path.join(base_path, 'config', 'tasks.yml')
+        
+        with open(agents_path, 'r', encoding='utf-8') as f:
             self.agents_config = yaml.safe_load(f)
-        with open('config/tasks.yml', 'r') as f:
+        with open(tasks_path, 'r', encoding='utf-8') as f:
             self.tasks_config = yaml.safe_load(f)
 
     def setup_tools(self):
