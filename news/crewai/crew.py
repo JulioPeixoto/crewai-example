@@ -55,15 +55,26 @@ class NewsCrew:
     def setup_tasks(self):
         self.tasks = []
         for task in self.tasks_config['tasks']:
-            agent = self.agents[task['agent']]
-            task_tools = [self.tools[tool] for tool in task.get('tools', [])]
+            if not isinstance(task, dict): continue
             
+            agent = self.agents.get(task['agent'])
+            if not agent: continue
+                
+            task_tools = []
+            for tool in task.get('tool', []):
+                if tool in self.tools: task_tools.append(self.tools[tool])
+            
+            context = task.get('context', [])
+            
+            if isinstance(context, str): context = [context]
+            elif not isinstance(context, list): context = []
+                
             self.tasks.append(Task(
                 description=task['description'],
                 agent=agent,
                 expected_output=task['expected_output'],
                 tools=task_tools,
-                context=task.get('context', '')
+                context=context
             ))
 
     def run(self):
