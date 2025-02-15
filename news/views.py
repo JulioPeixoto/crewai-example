@@ -9,7 +9,6 @@ import base64
 from django.views.generic import ListView
 from django.utils import timezone
 from .crewai.crew import NewsCrew
-from .langchain import Model
 import markdown2
 
 @cache_page(60 * 15)  
