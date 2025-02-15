@@ -161,7 +161,7 @@ class NewsCrew:
             logger.debug("Crew configurada, iniciando kickoff")
             result = crew.kickoff()
             logger.info("Execução da crew finalizada com sucesso")
-            logger.debug(f"Resultado: {result[:200]}...")
+            logger.debug(f"Resultado: {result}...")
             return result
         except Exception as e:
             logger.error(f"Erro durante a execução da crew: {str(e)}", exc_info=True)
