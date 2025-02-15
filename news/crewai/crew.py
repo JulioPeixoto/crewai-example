@@ -1,7 +1,8 @@
+import yaml
+
+from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
 from langchain_community.tools import DuckDuckGoSearchRun
-import yaml
-from dotenv import load_dotenv
 
 load_dotenv()
 
