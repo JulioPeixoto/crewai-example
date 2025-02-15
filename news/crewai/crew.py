@@ -1,7 +1,9 @@
 from crewai import Crew, Agent, Task
-from tools.web_search import WebSearchTool
-from tools.web_scraping import WebScrapingTool
+from langchain_community.tools import DuckDuckGoSearchRun
 import yaml
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class NewsCrew:
     def __init__(self):
@@ -17,9 +19,9 @@ class NewsCrew:
             self.tasks_config = yaml.safe_load(f)
 
     def setup_tools(self):
+        search = DuckDuckGoSearchRun()
         self.tools = {
-            'web_search': WebSearchTool(),
-            'web_scraping': WebScrapingTool()
+            'web_search': search
         }
 
     def setup_agents(self):
@@ -30,7 +32,8 @@ class NewsCrew:
                 role=config['role'],
                 goal=config['goals'],
                 backstory=config['backstory'],
-                verbose=True
+                verbose=True,
+                allow_delegation=False
             )
 
     def setup_tasks(self):
@@ -43,7 +46,8 @@ class NewsCrew:
                 description=task['description'],
                 agent=agent,
                 expected_output=task['expected_output'],
-                tools=task_tools
+                tools=task_tools,
+                context=task.get('context', '')
             ))
 
     def run(self):

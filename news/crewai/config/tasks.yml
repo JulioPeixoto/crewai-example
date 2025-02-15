@@ -5,7 +5,6 @@ tasks:
     expected_output: "Lista com 5 notícias relevantes, incluindo fontes e principais pontos"
     tools:
       - "web_search"
-      - "web_scraping"
 
   - name: "Pesquisa de Tendências"
     agent: news_researcher
@@ -13,16 +12,15 @@ tasks:
     expected_output: "Relatório sobre tendências tecnológicas atuais e emergentes"
     tools:
       - "web_search"
-      - "web_scraping"
 
   - name: "Redigir Notícias"
     agent: news_writer
-    description: "Criar artigos completos para cada uma das 5 notícias identificadas"
-    expected_output: "5 artigos completos sobre tecnologia, com título, subtítulo e corpo"
-    context: "Usar as informações fornecidas pelo pesquisador"
+    description: "Criar artigos completos para cada uma das 5 notícias identificadas em formato markdown"
+    expected_output: "5 artigos em markdown com: # Título\n\nTexto da notícia\n\nData: [data_publicacao]"
+    context: "Usar as informações fornecidas pelo pesquisador e formatar em markdown"
 
   - name: "Revisar Conteúdo"
     agent: editor
-    description: "Revisar e editar os artigos produzidos"
-    expected_output: "Artigos revisados com correções e sugestões de melhoria"
-    context: "Verificar precisão, clareza e estilo dos artigos"
+    description: "Revisar e editar os artigos produzidos mantendo a formatação markdown"
+    expected_output: "Artigos revisados em markdown"
+    context: "Verificar precisão, clareza e estilo dos artigos mantendo a formatação"
