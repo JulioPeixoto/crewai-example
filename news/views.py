@@ -1,77 +1,77 @@
 # example/views.py
-from datetime import datetime
-from django.shortcuts import render
+import base64
+import logging
+
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.views.decorators.cache import cache_page
-from django.db.models import Prefetch
-from .models import Noticia
-import base64
-from django.views.generic import ListView
 from django.utils import timezone
-from .crewai.crew import NewsCrew
+from django.contrib import messages
+
 import markdown2
 
-@cache_page(60 * 15)  
+from .models import Noticia
+from .crewai.crew import NewsCrew
+
+logger = logging.getLogger(__name__)
+
+@cache_page(60 * 15)
 def index(request):
-    page_number = request.GET.get('page', 1)
-    
-    noticias_list = Noticia.objects.all().order_by('-data_publicacao').only(
-        'titulo', 'texto', 'links', 'imagem', 'tipo_imagem', 'data_publicacao'
+    page_number = request.GET.get("page", 1)
+
+    noticias_list = (
+        Noticia.objects.all()
+        .order_by("-data_publicacao")
+        .only("texto", "links", "imagem", "tipo_imagem", "data_publicacao")
     )
-    
+
     paginator = Paginator(noticias_list, 10)
     noticias = paginator.get_page(page_number)
-    
+
     for noticia in noticias:
         if noticia.imagem:
-            imagem_base64 = base64.b64encode(noticia.imagem).decode('utf-8')
+            imagem_base64 = base64.b64encode(noticia.imagem).decode("utf-8")
             noticia.imagem_base64 = f"data:{noticia.tipo_imagem};base64,{imagem_base64}"
-    
-    context = {
-        'noticias': noticias,
-        'page_obj': noticias,
-    }
-    return render(request, 'index.html', context)
 
-class NoticiaListView(ListView):
-    model = Noticia
-    template_name = 'index.html'
-    context_object_name = 'noticias'
-    paginate_by = 10
+    return render(request, "index.html", {
+        "noticias": noticias,
+        "page_obj": noticias,
+    })
 
-    def get_queryset(self):
-        # Executa o CrewAI para obter novas notícias
-        news_crew = NewsCrew()
-        crew_results = news_crew.run()
 
-        # Processa os resultados usando o LangChain para títulos
-        langchain_model = Model()
-        titles = langchain_model.create_tittle(crew_results)
+def gerar_noticias(request):
+    if request.method == "POST":
+        try:
+            news_crew = NewsCrew()
+            crew_results = news_crew.run()            
 
-        # Converte os resultados em formato markdown para HTML
-        for result in crew_results:
-            # Assume que cada resultado está em formato markdown
-            html_content = markdown2.markdown(result)
+            if not crew_results:
+                raise ValueError("Nenhum resultado gerado pelos agentes")
+
+            if hasattr(crew_results, 'raw_output'):
+                content = crew_results.raw_output
+            elif isinstance(crew_results, (list, tuple)):
+                content = crew_results[0]
+            else:
+                content = str(crew_results)
+
+            html_content = markdown2.markdown(content, extras=['fenced-code-blocks', 'tables'])
             
-            # Extrai título, texto e data do markdown
-            # (Isso depende do formato exato do seu markdown)
-            titulo = titles  # Ou extraia do markdown se preferir
-            texto = html_content
-            data_publicacao = timezone.now()
+            try:
+                noticia = Noticia.objects.create(
+                    texto=html_content,
+                    data_publicacao=timezone.now()
+                )
+                logger.info(f"Notícia salva com ID: {noticia.id}")
+            except Exception as db_error:
+                logger.error(f"Erro ao salvar no banco: {str(db_error)}")
+                raise
 
-            # Salva no banco de dados
-            Noticia.objects.create(
-                titulo=titulo,
-                texto=texto,
-                data_publicacao=data_publicacao
-            )
+            messages.success(request, "Notícias geradas com sucesso!")
+        except Exception as e:
+            logger.error(f"Erro: {str(e)}", exc_info=True)
+            messages.error(request, f"Erro ao gerar notícias: {str(e)}")
 
-        # Retorna todas as notícias ordenadas por data
-        return Noticia.objects.all().order_by('-data_publicacao')
+        return redirect("index")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Converte o texto markdown para HTML antes de enviar para o template
-        for noticia in context['noticias']:
-            noticia.texto = markdown2.markdown(noticia.texto)
-        return context
+    return redirect("index")

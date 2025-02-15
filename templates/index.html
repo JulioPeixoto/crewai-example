@@ -11,19 +11,35 @@
 </head>
 <body>
     <header>
-        <h1>Portal de Notícias</h1>
+        <h1>Minimal News</h1>
+        <form method="post" action="{% url 'gerar_noticias' %}" class="gerar-noticias-form">
+            {% csrf_token %}
+            <button type="submit" class="btn-gerar-noticias">
+                <span class="btn-text">Gerar Notícias</span>
+                <div class="loading-spinner" style="display: none;"></div>
+            </button>
+        </form>
     </header>
 
     <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="noticias-grid">
             {% for noticia in noticias %}
-            <article class="noticia-card markdown-body">
-                <h2 class="noticia-titulo">{{ noticia.titulo }}</h2>
+            <article class="noticia-card">
                 <div class="noticia-conteudo">
                     {{ noticia.texto|safe }}
                 </div>
                 <div class="noticia-data">
-                    {{ noticia.data_publicacao|date:"d/m/Y H:i" }}
+                    {{ noticia.data_publicacao|date:"d/m/Y" }}
                 </div>
             </article>
             {% empty %}
@@ -68,6 +84,16 @@
                     card.classList.remove('skeleton');
                 });
             });
+        });
+
+        document.querySelector('.gerar-noticias-form').addEventListener('submit', function(e) {
+            const button = this.querySelector('.btn-gerar-noticias');
+            const buttonText = button.querySelector('.btn-text');
+            const spinner = button.querySelector('.loading-spinner');
+            
+            buttonText.style.display = 'none';
+            spinner.style.display = 'block';
+            button.disabled = true;
         });
     </script>
 </body>
