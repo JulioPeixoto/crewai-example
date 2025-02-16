@@ -13,3 +13,11 @@ venv/
 ENV/ 
 env.bak/ 
 venv.bak/ 
+*.pyo
+*.pyd
+.Python
+.env.local
+.env.*.local
+local_settings.py
+staticfiles/
+.DS_Store

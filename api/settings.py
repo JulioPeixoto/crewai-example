@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import django_heroku
+import dj_database_url
 
 load_dotenv()  # carrega as variáveis do arquivo .env
 
@@ -24,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=cldztbc4jg&xl0!x673!*v2_=p$$eu)=7*f#d0#zs$44xx-h^'
+SECRET_KEY = os.getenv('SECRET_KEY', 'sua-chave-secreta-padrao')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['minimalnews-e25562c45049.herokuapp.com', 'localhost']
 
@@ -73,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'newsl-app.api.wsgi.application'
+WSGI_APPLICATION = 'api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -95,6 +97,13 @@ DATABASES = {
     }
 }
 
+# Configurações de ambiente
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=True
+    )
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -134,7 +143,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Configurações para arquivos de mídia
 MEDIA_URL = '/media/'
@@ -159,3 +168,9 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 MODEL = 'gpt-4o'
+
+# Configuração de arquivos estáticos
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Ativar configurações do Heroku
+django_heroku.settings(locals())
