@@ -1,0 +1,45 @@
+tasks:
+  - id: "pesquisa_noticias"
+    name: "Pesquisar Notícias do Dia"
+    agent: news_researcher
+    description: "Pesquisar as 5 notícias mais relevantes de tecnologia do dia {{ data|date:'Y-m-d'|safe }}. Priorize fontes confiáveis e notícias impactantes do ano de 2025."
+    expected_output: "Lista estruturada com 5 notícias, incluindo: título, fonte, data, resumo e link original."
+    tools: ["web_search"]
+    context: []
+
+  - id: "pesquisa_tendencias"
+    name: "Análise de Tendências"
+    agent: news_researcher
+    description: "Analisar as tendências tecnológicas emergentes relacionadas às notícias do ano de 2025."
+    expected_output: "Análise contextual das tendências identificadas nas notícias, com foco em impactos e desdobramentos."
+    tools: ["web_search"]
+    context: ["pesquisa_noticias"]
+
+  - id: "redigir_noticias"
+    name: "Redigir Notícias"
+    agent: news_writer
+    description: "Criar um artigo consolidado em markdown com as 5 notícias e análise de tendências para {{ data|date:'Y-m-d'|safe }}."
+    expected_output: |
+      # Notícias de Tecnologia do Dia
+
+      ## [Título da Notícia 1]
+      [Texto da notícia]
+      Fonte: [link]
+      Data: [data_publicacao]
+
+    context: ["pesquisa_noticias"]
+
+  - id: "revisar_conteudo"
+    name: "Revisar e Consolidar"
+    agent: editor
+    description: "Revisar, formatar e consolidar o conteúdo em um único artigo coeso em markdown, adequado para exibição web.
+    as noticias devem ter no minimo 3 paragrafos, mas devem ter o tamanho de acordo com a relevancia da noticia"
+    expected_output: |
+      <h1>Notícias de Tecnologia</h1>
+
+      <h2>[Título da Notícia]</h2>
+      <p>[Texto da notícia]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
+
+    context: ["redigir_noticias"]

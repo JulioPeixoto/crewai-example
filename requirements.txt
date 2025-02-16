@@ -1,0 +1,12 @@
+crewai
+crewai-tools
+dj-database-url
+Django
+django-heroku==0.3.1
+google-search-results
+gunicorn
+langchain-community
+markdown2
+python-dotenv
+uvicorn
+whitenoise
