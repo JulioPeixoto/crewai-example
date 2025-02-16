@@ -19,5 +19,5 @@ venv.bak/
 .env.local
 .env.*.local
 local_settings.py
-staticfiles/
+staticfiles
 .DS_Store
