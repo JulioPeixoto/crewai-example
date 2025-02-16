@@ -4,43 +4,15 @@ import time
 from typing import ClassVar
 from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
-from langchain_community.tools import DuckDuckGoSearchRun
 from crewai.tools import BaseTool
 import logging
 from pprint import pformat
-from duckduckgo_search.exceptions import DuckDuckGoSearchException
+from .tools.google_search import GoogleSearchWrapper
 
 # Configuração do logger do Django
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-
-class DuckDuckGoSearchWrapper(BaseTool):
-    name: str = "Web Search"
-    description: str = "Pesquisa na web usando DuckDuckGo"
-    max_retries: ClassVar[int] = 3
-    delay_between_retries: ClassVar[int] = 2
-
-    def _run(self, query: str) -> str:
-        for attempt in range(self.max_retries):
-            try:
-                search = DuckDuckGoSearchRun()
-                result = search.run(query)
-                return result
-            
-            except DuckDuckGoSearchException as e:
-                if "Ratelimit" in str(e):
-                    if attempt < self.max_retries - 1:
-                        wait_time = self.delay_between_retries * (attempt + 1)
-                        logger.warning(f"Rate limit atingido. Aguardando {wait_time} segundos antes de tentar novamente...")
-                        time.sleep(wait_time)
-                        continue
-                logger.error(f"Erro de rate limit após {self.max_retries} tentativas")
-                raise
-            except Exception as e:
-                logger.error(f"Erro na pesquisa DuckDuckGo: {str(e)}", exc_info=True)
-                raise
-
 
 class NewsCrew:
     def __init__(self):
@@ -77,7 +49,7 @@ class NewsCrew:
 
     def setup_tools(self):
         try:
-            search = DuckDuckGoSearchWrapper()
+            search = GoogleSearchWrapper()
             self.tools = {
                 'web_search': search
             }

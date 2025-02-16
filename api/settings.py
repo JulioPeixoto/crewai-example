@@ -174,3 +174,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Ativar configurações do Heroku
 django_heroku.settings(locals())
+
+SERPER_API_KEY = os.getenv('SERPER_API_KEY')

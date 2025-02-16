@@ -2,29 +2,44 @@ tasks:
   - id: "pesquisa_noticias"
     name: "Pesquisar Notícias do Dia"
     agent: news_researcher
-    description: "Pesquisar as 5 notícias mais relevantes de tecnologia do dia"
-    expected_output: "Lista com 5 notícias relevantes, incluindo fontes e principais pontos"
+    description: "Pesquisar as 5 notícias mais relevantes de tecnologia do dia {{ data|date:'Y-m-d'|safe }}. Priorize fontes confiáveis e notícias impactantes do ano de 2025."
+    expected_output: "Lista estruturada com 5 notícias, incluindo: título, fonte, data, resumo e link original."
     tools: ["web_search"]
-    context: [] 
+    context: []
 
   - id: "pesquisa_tendencias"
-    name: "Pesquisa de Tendências"
+    name: "Análise de Tendências"
     agent: news_researcher
-    description: "Identificar tendências emergentes em tecnologia"
-    expected_output: "Relatório sobre tendências tecnológicas atuais e emergentes"
+    description: "Analisar as tendências tecnológicas emergentes relacionadas às notícias do ano de 2025."
+    expected_output: "Análise contextual das tendências identificadas nas notícias, com foco em impactos e desdobramentos."
     tools: ["web_search"]
-    context: [] 
+    context: ["pesquisa_noticias"]
 
   - id: "redigir_noticias"
     name: "Redigir Notícias"
     agent: news_writer
-    description: "Criar artigos completos para cada uma das 5 notícias identificadas em formato markdown"
-    expected_output: "5 artigos em markdown com: # Título\n\nTexto da notícia\n\nData: [data_publicacao]"
+    description: "Criar um artigo consolidado em markdown com as 5 notícias e análise de tendências para {{ data|date:'Y-m-d'|safe }}."
+    expected_output: |
+      # Notícias de Tecnologia do Dia
+
+      ## [Título da Notícia 1]
+      [Texto da notícia]
+      Fonte: [link]
+      Data: [data_publicacao]
+
     context: ["pesquisa_noticias"]
 
   - id: "revisar_conteudo"
-    name: "Revisar Conteúdo"
+    name: "Revisar e Consolidar"
     agent: editor
-    description: "Revisar e editar os artigos produzidos mantendo a formatação markdown"
-    expected_output: "Artigos revisados em markdown"
+    description: "Revisar, formatar e consolidar o conteúdo em um único artigo coeso em markdown, adequado para exibição web.
+    as noticias devem ter no minimo 3 paragrafos, mas devem ter o tamanho de acordo com a relevancia da noticia"
+    expected_output: |
+      <h1>Notícias de Tecnologia</h1>
+
+      <h2>[Título da Notícia]</h2>
+      <p>[Texto da notícia]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
+
     context: ["redigir_noticias"]
