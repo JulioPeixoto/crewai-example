@@ -4,41 +4,52 @@ import time
 from typing import ClassVar
 from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
-from langchain_community.tools import DuckDuckGoSearchRun
 from crewai.tools import BaseTool
 import logging
 from pprint import pformat
-from duckduckgo_search.exceptions import DuckDuckGoSearchException
+from serpapi import GoogleSearch
 
 # Configuração do logger do Django
 logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-class DuckDuckGoSearchWrapper(BaseTool):
+class GoogleSearchWrapper(BaseTool):
     name: str = "Web Search"
-    description: str = "Pesquisa na web usando DuckDuckGo"
+    description: str = "Pesquisa na web usando Google Search"
+    api_key: ClassVar[str] = "722a75fd8a59e05a335b8c40c22bb85f0bfc5b5d68c8df05ba364e64f663525f"
     max_retries: ClassVar[int] = 3
     delay_between_retries: ClassVar[int] = 2
 
     def _run(self, query: str) -> str:
         for attempt in range(self.max_retries):
             try:
-                search = DuckDuckGoSearchRun()
-                result = search.run(query)
-                return result
+                search = GoogleSearch({
+                    "q": query,
+                    "api_key": self.api_key,
+                    "num": 5  
+                })
+                results = search.get_dict()
+                
+                if "error" in results:
+                    raise Exception(f"Erro na API do Google: {results['error']}")
+                
+                formatted_results = []
+                for result in results.get("organic_results", []):
+                    title = result.get("title", "Sem título")
+                    link = result.get("link", "")
+                    snippet = result.get("snippet", "Sem descrição")
+                    formatted_results.append(f"Título: {title}\nLink: {link}\nDescrição: {snippet}\n")
+                
+                return "\n".join(formatted_results)
             
-            except DuckDuckGoSearchException as e:
-                if "Ratelimit" in str(e):
-                    if attempt < self.max_retries - 1:
-                        wait_time = self.delay_between_retries * (attempt + 1)
-                        logger.warning(f"Rate limit atingido. Aguardando {wait_time} segundos antes de tentar novamente...")
-                        time.sleep(wait_time)
-                        continue
-                logger.error(f"Erro de rate limit após {self.max_retries} tentativas")
-                raise
             except Exception as e:
-                logger.error(f"Erro na pesquisa DuckDuckGo: {str(e)}", exc_info=True)
+                if attempt < self.max_retries - 1:
+                    wait_time = self.delay_between_retries * (attempt + 1)
+                    logger.warning(f"Erro na pesquisa. Aguardando {wait_time} segundos antes de tentar novamente...")
+                    time.sleep(wait_time)
+                    continue
+                logger.error(f"Erro após {self.max_retries} tentativas: {str(e)}")
                 raise
 
 
@@ -77,7 +88,7 @@ class NewsCrew:
 
     def setup_tools(self):
         try:
-            search = DuckDuckGoSearchWrapper()
+            search = GoogleSearchWrapper()
             self.tools = {
                 'web_search': search
             }
