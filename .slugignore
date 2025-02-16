@@ -1,9 +1,0 @@
-# Exemplo de .slugignore
-media/
-tests/
-docs/
-__pycache__/
-*.log
-*.sqlite3
-*.pyc
-.env
