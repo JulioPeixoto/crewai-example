@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Notícias</title>
+    <title>Minimal News</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <!-- Adicione um CSS para estilizar o markdown -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
@@ -12,13 +12,6 @@
 <body>
     <header>
         <h1>Minimal News</h1>
-        <form method="post" action="{% url 'gerar_noticias' %}" class="gerar-noticias-form">
-            {% csrf_token %}
-            <button type="submit" class="btn-gerar-noticias">
-                <span class="btn-text">Gerar Notícias</span>
-                <div class="loading-spinner" style="display: none;"></div>
-            </button>
-        </form>
     </header>
 
     <div class="container">
