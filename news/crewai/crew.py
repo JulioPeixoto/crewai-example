@@ -1,14 +1,19 @@
-import yaml
+# Imports da biblioteca padrão
+import logging
 import os
 import time
+from pprint import pformat
 from typing import ClassVar
-from dotenv import load_dotenv
+
+# Imports de terceiros
 from crewai import Crew, Agent, Task
 from crewai.tools import BaseTool
-import logging
-from pprint import pformat
-from .tools.google_search import GoogleSearchWrapper
 from django.utils import timezone
+from dotenv import load_dotenv
+import yaml
+
+# Imports locais
+from .tools.google_search import GoogleSearchWrapper
 
 # Configuração do logger do Django
 logger = logging.getLogger(__name__)

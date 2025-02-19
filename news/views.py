@@ -2,14 +2,15 @@
 import base64
 import logging
 
-from django.shortcuts import render, redirect
-from django.core.paginator import Paginator
-from django.views.decorators.cache import cache_page
-from django.utils import timezone
+# Imports de terceiros
 from django.contrib import messages
-
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.views.decorators.cache import cache_page
 import markdown2
 
+# Imports locais
 from .models import Noticia
 from .crewai.crew import NewsCrew
 
