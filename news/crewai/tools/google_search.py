@@ -1,8 +1,13 @@
+# Imports da biblioteca padrão
+import logging
+import time
+from typing import ClassVar
+
+# Imports de terceiros
 from crewai.tools import BaseTool
 from serpapi import GoogleSearch
-import time
-import logging
-from typing import ClassVar
+
+# Imports locais
 from api.settings import SERPER_API_KEY
 
 logger = logging.getLogger(__name__)

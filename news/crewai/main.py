@@ -1,3 +1,4 @@
+# Imports locais
 from crew import NewsCrew
 
 def main():
