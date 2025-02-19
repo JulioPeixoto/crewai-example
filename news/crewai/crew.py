@@ -8,6 +8,7 @@ from crewai.tools import BaseTool
 import logging
 from pprint import pformat
 from .tools.google_search import GoogleSearchWrapper
+from django.utils import timezone
 
 # Configuração do logger do Django
 logger = logging.getLogger(__name__)
@@ -15,8 +16,9 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 class NewsCrew:
-    def __init__(self):
+    def __init__(self, data=None):
         self.tasks_map = {}
+        self.data = data or timezone.now()
         try:
             logger.info("Iniciando NewsCrew")
             self.load_config()
@@ -91,6 +93,12 @@ class NewsCrew:
             # Primeiro cria todas as tarefas
             for task_config in self.tasks_config['tasks']:                
                 agent = self.agents.get(task_config['agent'])
+                
+                # Substituir a variável de data na descrição
+                description = task_config['description'].replace(
+                    "{{ data|date:'Y-m-d'|safe }}", 
+                    self.data.strftime('%Y-%m-%d')
+                )
                     
                 task_tools = []
                 for tool in task_config.get('tools', []):
@@ -100,7 +108,7 @@ class NewsCrew:
                         logger.warning(f"Ferramenta '{tool}' não encontrada. Ferramentas disponíveis: {list(self.tools.keys())}")
                 
                 task = Task(
-                    description=task_config['description'],
+                    description=description,
                     agent=agent,
                     expected_output=task_config['expected_output'],
                     tools=task_tools,

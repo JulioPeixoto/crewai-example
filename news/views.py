@@ -40,9 +40,10 @@ def index(request):
 
 
 def gerar_noticias(request):
-    if request.method == "POST":
+    if request.method == "GET":
         try:
-            news_crew = NewsCrew()
+            data_atual = timezone.now()
+            news_crew = NewsCrew(data=data_atual)
             crew_results = news_crew.run()            
 
             if not crew_results:
