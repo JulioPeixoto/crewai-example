@@ -48,7 +48,8 @@ body {
     font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     margin-bottom: 1.5rem;
     line-height: 1.2;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    margin-left: 20px;
 }
 
 .noticia-conteudo hr {
@@ -61,6 +62,10 @@ body {
     display: none;  /* Ocultar os blocos de código */
 }
 
+.noticia-conteudo h2 {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
 /* Remover a data que vem no markdown */
 .noticia-conteudo p:last-child {
     display: none;
