@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Times New Roman', Times, serif;
-    background-color: #dadbd5;
+    background-color: #e9e6c8ad;
     color: #333333;
     line-height: 1.6;
 }
@@ -63,8 +63,8 @@ header h1 {
     font-family: 'Times New Roman', Times, serif;
     color: #333;
     margin-bottom: 1.5rem;
-    line-height: 1.4;
-    font-size: 1.4rem;
+    line-height: 1.2;
+    font-size: 1.2rem;
 }
 
 .noticia-conteudo hr {
