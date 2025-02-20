@@ -5,9 +5,9 @@
 }
 
 body {
-    font-family: 'Times New Roman', Times, serif;
-    background-color: #dadbd5;
-    color: #333333;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+    background-color: #333333;
+    color: #f0e4e4;
     line-height: 1.6;
 }
 
@@ -25,11 +25,10 @@ header {
 }
 
 header h1 {
-    font-family: "Chomsky", "Old English Text MT", serif;
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     margin: 0;
     text-align: left;
-    color: #121212;
+    color: #f0e4e4;
 }
 
 .noticias-grid {
@@ -51,20 +50,19 @@ header h1 {
 }
 
 .noticia-conteudo h1 {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-size: 2rem;
     font-weight: 700;
     margin: 2rem 0 1rem;
-    color: #121212;
+    color: #f0e4e4;
     line-height: 1.2;
 }
 
 .noticia-conteudo p {
-    font-family: 'Times New Roman', Times, serif;
-    color: #333;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     margin-bottom: 1.5rem;
-    line-height: 1.4;
-    font-size: 1.4rem;
+    line-height: 1.2;
+    font-size: 1.2rem;
 }
 
 .noticia-conteudo hr {
@@ -83,16 +81,15 @@ header h1 {
 }
 
 .noticia-titulo {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: #121212;
     line-height: 1.2;
 }
 
 .noticia-texto {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     color: #333;
     margin-bottom: 1.5rem;
     line-height: 1.8;
@@ -100,7 +97,7 @@ header h1 {
 }
 
 .noticia-data {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     color: #666;
     font-size: 0.9rem;
     margin-bottom: 1rem;
@@ -123,12 +120,11 @@ header h1 {
     justify-content: center;
     gap: 15px;
     margin: 3rem 0;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 .pagination a, .pagination span {
     padding: 8px 16px;
-    color: #121212;
     text-decoration: none;
     border: 1px solid #e2e2e2;
 }
@@ -174,7 +170,7 @@ header h1 {
     margin: 1rem auto;
     padding: 1rem;
     border-radius: 3px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 .alert-success {
@@ -188,3 +184,7 @@ header h1 {
     border-left: 4px solid #dc2626;
     color: #dc2626;
 } 
+
+a {
+    color: #979797;
+}
