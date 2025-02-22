@@ -21,12 +21,15 @@ class GoogleSearchWrapper(BaseTool):
     delay_between_retries: ClassVar[int] = 2
 
     def _run(self, query: str) -> str:
+        if isinstance(query, dict) and 'description' in query:
+            query = query['description']
+            
         for attempt in range(self.max_retries):
             try:
                 search = GoogleSearch({
                     "q": query,
                     "api_key": self.api_key,
-                    "num": 5  
+                    "num": 1  # Reduzido para 1 resultado
                 })
                 results = search.get_dict()
                 
