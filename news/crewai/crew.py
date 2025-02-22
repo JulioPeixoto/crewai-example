@@ -20,6 +20,8 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
+SERPER_API_KEY = os.getenv('SERPER_API_KEY')
+
 class NewsCrew:
     def __init__(self, data=None):
         self.tasks_map = {}
@@ -56,12 +58,26 @@ class NewsCrew:
 
     def setup_tools(self):
         try:
+            logger.info("=== Iniciando setup das ferramentas ===")
+            logger.info(f"SERPER_API_KEY presente: {'Sim' if SERPER_API_KEY else 'Não'}")
+            if SERPER_API_KEY:
+                logger.info(f"Primeiros 5 caracteres da API key: {SERPER_API_KEY[:5]}")
+            
             search = GoogleSearchWrapper()
+            logger.info("GoogleSearchWrapper instanciado com sucesso")
+            
             self.tools = {
                 'web_search': search
             }
             logger.info("Ferramentas configuradas com sucesso")
             logger.debug(f"Ferramentas disponíveis: {list(self.tools.keys())}")
+            
+            # Teste de configuração
+            test_tool = self.tools['web_search']
+            logger.info(f"API key na ferramenta: {'Sim' if test_tool.api_key else 'Não'}")
+            if test_tool.api_key:
+                logger.info(f"Primeiros 5 caracteres da API key na ferramenta: {test_tool.api_key[:5]}")
+            
         except Exception as e:
             logger.error(f"Erro na configuração das ferramentas: {str(e)}", exc_info=True)
             raise
