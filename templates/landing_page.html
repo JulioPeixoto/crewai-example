@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="landing-container">
+    <header class="landing-header">
+        <h1>Minimal News</h1>
+        <p class="subtitle">Notícias de tecnologia do futuro, hoje.</p>
+    </header>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>IA Avançada</h3>
+            <p>Notícias geradas e curadas por inteligência artificial de última geração.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Múltiplas Perspectivas</h3>
+            <p>Cada notícia é analisada sob diferentes ângulos para uma compreensão completa.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Tecnologia 2025</h3>
+            <p>Fique à frente do tempo com notícias do futuro da tecnologia.</p>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <h2>Explore o Futuro da Tecnologia</h2>
+        <p>Acesse agora mesmo nossas notícias mais recentes e descubra o que o futuro reserva.</p>
+        <a href="{% url 'noticias' %}" class="cta-button">Ver Notícias</a>
+    </section>
+
+    <section class="about-section">
+        <h2>Sobre o Minimal News</h2>
+        <p>Uma plataforma inovadora que utiliza inteligência artificial avançada para trazer as notícias mais relevantes sobre tecnologia, com foco especial em tendências e desenvolvimentos previstos para 2025.</p>
+    </section>
+</div>
+{% endblock %} 

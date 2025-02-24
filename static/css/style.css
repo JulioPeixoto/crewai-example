@@ -11,6 +11,131 @@ body {
     line-height: 1.6;
 }
 
+/* Estilos da Landing Page */
+.landing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.landing-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.landing-header h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: #f0e4e4;
+}
+
+.landing-header .subtitle {
+    font-size: 1.5rem;
+    color: #c7c4c4;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.feature-card {
+    background: #444444;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card h3 {
+    color: #f0e4e4;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.feature-card p {
+    color: #c7c4c4;
+}
+
+.cta-section {
+    text-align: center;
+    margin: 60px 0;
+    padding: 60px 20px;
+    background: #444444;
+    border-radius: 10px;
+}
+
+.cta-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #f0e4e4;
+}
+
+.cta-section p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #c7c4c4;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 40px;
+    background: #1f6feb;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    transition: background 0.3s ease;
+}
+
+.cta-button:hover {
+    background: #1a5cc6;
+}
+
+.about-section {
+    text-align: center;
+    margin: 60px 0;
+}
+
+.about-section h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #f0e4e4;
+}
+
+.about-section p {
+    font-size: 1.1rem;
+    color: #c7c4c4;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .landing-header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .landing-header .subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .features {
+        grid-template-columns: 1fr;
+    }
+    
+    .cta-section h2 {
+        font-size: 2rem;
+    }
+}
+
+/* Estilos existentes para notícias */
 .container {
     max-width: 1200px;
     margin: 0 auto;

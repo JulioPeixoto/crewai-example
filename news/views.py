@@ -16,6 +16,9 @@ from .crewai.crew import NewsCrew
 
 logger = logging.getLogger(__name__)
 
+def landing_page(request):
+    return render(request, "landing_page.html")
+
 @cache_page(60 * 15)
 def index(request):
     page_number = request.GET.get("page", 1)
@@ -74,6 +77,6 @@ def gerar_noticias(request):
             logger.error(f"Erro: {str(e)}", exc_info=True)
             messages.error(request, f"Erro ao gerar notícias: {str(e)}")
 
-        return redirect("index")
+        return redirect("noticias")
 
-    return redirect("index")
+    return redirect("noticias")
