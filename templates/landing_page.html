@@ -1,80 +1,85 @@
-{% extends "base.html" %}
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container">
+  <img src="{% static 'crewai.png' %}" alt="CrewAI Logo" class="logo" />
 
-{% block content %}
-<div class="landing-container">
-    <header class="landing-header">
-        <h1>Minimal News</h1>
-        <p class="subtitle">Sistema Multiagente com CrewAI para Geração de Notícias</p>
-    </header>
+  <h1>Sistema Multiagente com CrewAI</h1>
 
-    <section class="architecture-section">
-        <h2>Arquitetura do Sistema</h2>
-        <div class="agent-flow">
-            <div class="agent-card">
-                <h3>Pesquisador</h3>
-                <p>Especializado em encontrar notícias relevantes de tecnologia. Utiliza ferramentas de busca avançada para identificar uma notícia principal e seus possíveis desdobramentos.</p>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="agent-card">
-                <h3>Analista</h3>
-                <p>Analisa tendências e implicações da notícia principal, explorando diferentes ângulos e perspectivas para criar uma cobertura completa.</p>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="agent-card">
-                <h3>Redator</h3>
-                <p>Transforma as análises em artigos coesos, adaptando o conteúdo para diferentes aspectos da notícia principal.</p>
-            </div>
-        </div>
-    </section>
+  <p>
+    O Minimal News utiliza um sistema multiagente baseado no framework CrewAI
+    para gerar notícias de tecnologia de forma autônoma. O fluxo de trabalho é
+    composto por três agentes especializados que colaboram em sequência:
+  </p>
 
-    <section class="process-section">
-        <h2>Fluxo de Trabalho</h2>
-        <div class="process-steps">
-            <div class="step-card">
-                <span class="step-number">1</span>
-                <h4>Pesquisa Inicial</h4>
-                <p>O agente pesquisador utiliza a API do Google Search para encontrar uma notícia tecnológica relevante de 2025.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-number">2</span>
-                <h4>Análise Multifacetada</h4>
-                <p>A notícia é analisada sob 5 perspectivas diferentes, gerando ângulos únicos de cobertura.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-number">3</span>
-                <h4>Produção de Conteúdo</h4>
-                <p>Cada ângulo é transformado em um artigo completo, com contextualização e análise aprofundada.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-number">4</span>
-                <h4>Revisão e Publicação</h4>
-                <p>O conteúdo é revisado, formatado e publicado automaticamente no site.</p>
-            </div>
-        </div>
-    </section>
+  <pre>
+Pesquisador → Analista → Redator
+    </pre
+  >
 
-    <section class="tech-section">
-        <h2>Tecnologias Utilizadas</h2>
-        <div class="tech-stack">
-            <div class="tech-item">
-                <h4>CrewAI</h4>
-                <p>Framework para orquestração de agentes autônomos, permitindo colaboração eficiente entre diferentes especialistas AI.</p>
-            </div>
-            <div class="tech-item">
-                <h4>LangChain</h4>
-                <p>Utilizado para processamento de linguagem natural e integração com modelos de linguagem avançados.</p>
-            </div>
-            <div class="tech-item">
-                <h4>Django</h4>
-                <p>Framework web para gerenciamento do backend e interface com o usuário.</p>
-            </div>
-        </div>
-    </section>
+  <p>
+    <strong>1. Pesquisador:</strong> Inicia o processo buscando uma notícia
+    tecnológica relevante. Utiliza a API do Google Search para encontrar
+    informações atuais e identifica diferentes ângulos para exploração.
+  </p>
 
-    <section class="cta-section">
-        <h2>Veja o Resultado</h2>
-        <p>Confira as notícias geradas por nosso sistema multiagente.</p>
-        <a href="{% url 'noticias' %}" class="cta-button">Ver Notícias</a>
-    </section>
+  <p>
+    <strong>2. Analista:</strong> Recebe os resultados da pesquisa e analisa as
+    tendências e implicações da notícia principal. Explora os diferentes ângulos
+    e perspectivas, criando um contexto mais amplo para cada aspecto.
+  </p>
+
+  <p>
+    <strong>3. Redator:</strong> Transforma as análises em artigos coesos. Cada
+    ângulo da notícia principal é desenvolvido em um texto independente, mas
+    conectado ao tema central.
+  </p>
+
+  <p>
+    O sistema utiliza apenas uma pesquisa inicial para gerar cinco artigos
+    diferentes, economizando recursos e oferecendo uma cobertura completa a
+    partir de uma única fonte. Cada agente possui objetivos específicos e
+    trabalha de forma autônoma, mas colaborativa, passando informações para o
+    próximo na cadeia.
+  </p>
+
+  <p>
+    O CrewAI orquestra todo esse processo, gerenciando a comunicação entre os
+    agentes e garantindo que cada um receba os inputs necessários para realizar
+    sua tarefa. O resultado final é um conjunto de notícias tecnológicas geradas
+    de forma totalmente automatizada.
+  </p>
+
+  <h1>Fluxo de Tarefas</h1>
+
+  <p>
+    O processo de geração de notícias segue um fluxo de tarefas bem definido:
+  </p>
+
+  <pre>
+Pesquisar Notícias → Análise de Tendências → Redigir Notícias → Revisar e Consolidar
+  </pre>
+
+  <p>
+    <strong>1. Pesquisar Notícias do Dia:</strong> Busca uma notícia relevante
+    de tecnologia e cria 5 ângulos diferentes para exploração.
+  </p>
+
+  <p>
+    <strong>2. Análise de Tendências:</strong> Analisa as tendências
+    tecnológicas emergentes relacionadas à notícia principal e seus
+    desdobramentos.
+  </p>
+
+  <p>
+    <strong>3. Redigir Notícias:</strong> Cria 5 artigos em markdown a partir da
+    notícia principal, cada um explorando um aspecto diferente.
+  </p>
+
+  <p>
+    <strong>4. Revisar e Consolidar:</strong> Revisa, formata e consolida os 5
+    artigos em um único artigo coeso, adequando o tamanho de cada seção à
+    relevância do tema.
+  </p>
+
+  <a href="{% url 'noticias' %}" class="link">Ver notícias geradas →</a>
 </div>
-{% endblock %} 
+{% endblock %}

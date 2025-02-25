@@ -1,80 +1,42 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimal News</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <!-- Adicione um CSS para estilizar o markdown -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
-</head>
-<body>
-    <div class="container">
+{% extends 'base.html' %}
 
-        <div class="noticias-grid">
-            {% for noticia in noticias %}
-            <article class="noticia-card">
-                <div class="noticia-conteudo">
-                    {{ noticia.texto|safe }}
-                </div>
-                <div class="noticia-data">
-                    {{ noticia.data_publicacao|date:"d/m/Y" }}
-                </div>
-            </article>
-            {% empty %}
-            <p>Nenhuma notícia disponível no momento.</p>
-            {% endfor %}
-        </div>
-
-        <!-- Paginação -->
-        {% if page_obj.paginator.num_pages > 1 %}
-        <div class="pagination">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; Primeira</a>
-                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-            {% endif %}
-
-            <span class="current">
-                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">Próxima</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
-            {% endif %}
-        </div>
-        {% endif %}
+{% block content %}
+<div class="container noticias-container">
+    <h1>Notícias Geradas por CrewAI</h1>
+    
+    <a href="{% url 'landing_page' %}" class="link back-link">← Voltar para explicação</a>
+    
+    <div class="noticias-grid">
+        {% for noticia in noticias %}
+        <article class="noticia-item">
+            <div class="noticia-conteudo">
+                {{ noticia.texto|safe }}
+            </div>
+        </article>
+        {% empty %}
+        <p class="no-content">Nenhuma notícia disponível no momento.</p>
+        {% endfor %}
     </div>
 
-    <!-- Script para loading progressivo -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Adicionar classe skeleton durante o carregamento
-            const cards = document.querySelectorAll('.noticia-card');
-            cards.forEach(card => {
-                if (!card.querySelector('img')) {
-                    card.classList.add('skeleton');
-                }
-            });
+    <!-- Paginação -->
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; Primeira</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+        {% endif %}
 
-            // Remover classe skeleton após carregamento
-            window.addEventListener('load', function() {
-                cards.forEach(card => {
-                    card.classList.remove('skeleton');
-                });
-            });
-        });
+        <span class="current">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
 
-        document.querySelector('.gerar-noticias-form').addEventListener('submit', function(e) {
-            const button = this.querySelector('.btn-gerar-noticias');
-            const buttonText = button.querySelector('.btn-text');
-            const spinner = button.querySelector('.loading-spinner');
-            
-            buttonText.style.display = 'none';
-            spinner.style.display = 'block';
-            button.disabled = true;
-        });
-    </script>
-</body>
-</html> 
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Próxima</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <a href="{% url 'gerar_noticias' %}" class="link generate-link">Gerar novas notícias</a>
+</div>
+{% endblock %} 
