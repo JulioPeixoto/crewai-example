@@ -16,23 +16,19 @@ from .crewai.crew import NewsCrew
 
 logger = logging.getLogger(__name__)
 
+def landing_page(request):
+    return render(request, "landing_page.html")
+
 @cache_page(60 * 15)
 def index(request):
     page_number = request.GET.get("page", 1)
 
     noticias_list = (
         Noticia.objects.all()
-        .order_by("-data_publicacao")
-        .only("texto", "links", "imagem", "tipo_imagem", "data_publicacao")
     )
 
     paginator = Paginator(noticias_list, 10)
     noticias = paginator.get_page(page_number)
-
-    for noticia in noticias:
-        if noticia.imagem:
-            imagem_base64 = base64.b64encode(noticia.imagem).decode("utf-8")
-            noticia.imagem_base64 = f"data:{noticia.tipo_imagem};base64,{imagem_base64}"
 
     return render(request, "index.html", {
         "noticias": noticias,
@@ -74,6 +70,6 @@ def gerar_noticias(request):
             logger.error(f"Erro: {str(e)}", exc_info=True)
             messages.error(request, f"Erro ao gerar notícias: {str(e)}")
 
-        return redirect("index")
+        return redirect("noticias")
 
-    return redirect("index")
+    return redirect("noticias")

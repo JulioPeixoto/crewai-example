@@ -1,0 +1,118 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container">
+  <img src="{% static 'crewai.png' %}" alt="CrewAI Logo" class="logo" />
+
+  <a href="{% url 'noticias' %}" class="link">Ver notícias geradas →</a>
+
+  <h1>Sobre o CrewAI</h1>
+
+  <p>
+    O CrewAI é um framework de código aberto para orquestrar agentes de IA em
+    fluxos de trabalho colaborativos. Ele permite a criação de sistemas
+    multiagentes onde cada agente tem um papel específico e trabalha em conjunto
+    para atingir objetivos complexos.
+  </p>
+
+  <p>
+    <strong>Principais características:</strong>
+  </p>
+
+  <pre>
+Agentes Especializados | Fluxos de Trabalho | Ferramentas Integradas | Memória Compartilhada
+  </pre>
+
+  <p>
+    O framework facilita a comunicação entre agentes, permitindo que eles
+    compartilhem informações e resultados de forma eficiente. Cada agente pode
+    ter suas próprias ferramentas, conhecimentos e objetivos, mas trabalham de
+    forma coordenada para resolver problemas complexos.
+  </p>
+
+  <p>
+    No Minimal News, o CrewAI gerencia todo o processo de geração de notícias,
+    desde a pesquisa inicial até a redação final, garantindo que cada etapa seja
+    executada na ordem correta e que as informações fluam adequadamente entre os
+    agentes.
+  </p>
+
+  <h1>Sistema Multiagente com CrewAI</h1>
+
+  <p>
+    O Minimal News utiliza um sistema multiagente baseado no framework CrewAI
+    para gerar notícias de tecnologia de forma autônoma. O fluxo de trabalho é
+    composto por três agentes especializados que colaboram em sequência:
+  </p>
+
+  <pre>
+Pesquisador → Analista → Redator
+    </pre
+  >
+
+  <p>
+    <strong>1. Pesquisador:</strong> Inicia o processo buscando uma notícia
+    tecnológica relevante. Utiliza a API do Google Search para encontrar
+    informações atuais e identifica diferentes ângulos para exploração.
+  </p>
+
+  <p>
+    <strong>2. Analista:</strong> Recebe os resultados da pesquisa e analisa as
+    tendências e implicações da notícia principal. Explora os diferentes ângulos
+    e perspectivas, criando um contexto mais amplo para cada aspecto.
+  </p>
+
+  <p>
+    <strong>3. Redator:</strong> Transforma as análises em artigos coesos. Cada
+    ângulo da notícia principal é desenvolvido em um texto independente, mas
+    conectado ao tema central.
+  </p>
+
+  <p>
+    O sistema utiliza apenas uma pesquisa inicial para gerar cinco artigos
+    diferentes, economizando recursos e oferecendo uma cobertura completa a
+    partir de uma única fonte. Cada agente possui objetivos específicos e
+    trabalha de forma autônoma, mas colaborativa, passando informações para o
+    próximo na cadeia.
+  </p>
+
+  <p>
+    O CrewAI orquestra todo esse processo, gerenciando a comunicação entre os
+    agentes e garantindo que cada um receba os inputs necessários para realizar
+    sua tarefa. O resultado final é um conjunto de notícias tecnológicas geradas
+    de forma totalmente automatizada.
+  </p>
+
+  <h1>Fluxo de Tarefas</h1>
+
+  <p>
+    O processo de geração de notícias segue um fluxo de tarefas bem definido:
+  </p>
+
+  <pre>
+Pesquisar Notícias → Análise de Tendências → Redigir Notícias → Revisar e Consolidar
+  </pre>
+
+  <p>
+    <strong>1. Pesquisar Notícias do Dia:</strong> Busca uma notícia relevante
+    de tecnologia e cria 5 ângulos diferentes para exploração.
+  </p>
+
+  <p>
+    <strong>2. Análise de Tendências:</strong> Analisa as tendências
+    tecnológicas emergentes relacionadas à notícia principal e seus
+    desdobramentos.
+  </p>
+
+  <p>
+    <strong>3. Redigir Notícias:</strong> Cria 5 artigos em markdown a partir da
+    notícia principal, cada um explorando um aspecto diferente.
+  </p>
+
+  <p>
+    <strong>4. Revisar e Consolidar:</strong> Revisa, formata e consolida os 5
+    artigos em um único artigo coeso, adequando o tamanho de cada seção à
+    relevância do tema.
+  </p>
+
+  <a href="{% url 'noticias' %}" class="link">Ver notícias geradas →</a>
+</div>
+{% endblock %}
