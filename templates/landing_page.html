@@ -4,33 +4,77 @@
 <div class="landing-container">
     <header class="landing-header">
         <h1>Minimal News</h1>
-        <p class="subtitle">Notícias de tecnologia do futuro, hoje.</p>
+        <p class="subtitle">Sistema Multiagente com CrewAI para Geração de Notícias</p>
     </header>
 
-    <section class="features">
-        <div class="feature-card">
-            <h3>IA Avançada</h3>
-            <p>Notícias geradas e curadas por inteligência artificial de última geração.</p>
+    <section class="architecture-section">
+        <h2>Arquitetura do Sistema</h2>
+        <div class="agent-flow">
+            <div class="agent-card">
+                <h3>Pesquisador</h3>
+                <p>Especializado em encontrar notícias relevantes de tecnologia. Utiliza ferramentas de busca avançada para identificar uma notícia principal e seus possíveis desdobramentos.</p>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="agent-card">
+                <h3>Analista</h3>
+                <p>Analisa tendências e implicações da notícia principal, explorando diferentes ângulos e perspectivas para criar uma cobertura completa.</p>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="agent-card">
+                <h3>Redator</h3>
+                <p>Transforma as análises em artigos coesos, adaptando o conteúdo para diferentes aspectos da notícia principal.</p>
+            </div>
         </div>
-        <div class="feature-card">
-            <h3>Múltiplas Perspectivas</h3>
-            <p>Cada notícia é analisada sob diferentes ângulos para uma compreensão completa.</p>
+    </section>
+
+    <section class="process-section">
+        <h2>Fluxo de Trabalho</h2>
+        <div class="process-steps">
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <h4>Pesquisa Inicial</h4>
+                <p>O agente pesquisador utiliza a API do Google Search para encontrar uma notícia tecnológica relevante de 2025.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <h4>Análise Multifacetada</h4>
+                <p>A notícia é analisada sob 5 perspectivas diferentes, gerando ângulos únicos de cobertura.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <h4>Produção de Conteúdo</h4>
+                <p>Cada ângulo é transformado em um artigo completo, com contextualização e análise aprofundada.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">4</span>
+                <h4>Revisão e Publicação</h4>
+                <p>O conteúdo é revisado, formatado e publicado automaticamente no site.</p>
+            </div>
         </div>
-        <div class="feature-card">
-            <h3>Tecnologia 2025</h3>
-            <p>Fique à frente do tempo com notícias do futuro da tecnologia.</p>
+    </section>
+
+    <section class="tech-section">
+        <h2>Tecnologias Utilizadas</h2>
+        <div class="tech-stack">
+            <div class="tech-item">
+                <h4>CrewAI</h4>
+                <p>Framework para orquestração de agentes autônomos, permitindo colaboração eficiente entre diferentes especialistas AI.</p>
+            </div>
+            <div class="tech-item">
+                <h4>LangChain</h4>
+                <p>Utilizado para processamento de linguagem natural e integração com modelos de linguagem avançados.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Django</h4>
+                <p>Framework web para gerenciamento do backend e interface com o usuário.</p>
+            </div>
         </div>
     </section>
 
     <section class="cta-section">
-        <h2>Explore o Futuro da Tecnologia</h2>
-        <p>Acesse agora mesmo nossas notícias mais recentes e descubra o que o futuro reserva.</p>
+        <h2>Veja o Resultado</h2>
+        <p>Confira as notícias geradas por nosso sistema multiagente.</p>
         <a href="{% url 'noticias' %}" class="cta-button">Ver Notícias</a>
-    </section>
-
-    <section class="about-section">
-        <h2>Sobre o Minimal News</h2>
-        <p>Uma plataforma inovadora que utiliza inteligência artificial avançada para trazer as notícias mais relevantes sobre tecnologia, com foco especial em tendências e desenvolvimentos previstos para 2025.</p>
     </section>
 </div>
 {% endblock %} 

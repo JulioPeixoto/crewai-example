@@ -34,35 +34,140 @@ body {
     color: #c7c4c4;
 }
 
-.features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-bottom: 60px;
+/* Seção de Arquitetura */
+.architecture-section {
+    margin-bottom: 80px;
 }
 
-.feature-card {
+.architecture-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #f0e4e4;
+}
+
+.agent-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.agent-card {
     background: #444444;
     padding: 30px;
     border-radius: 10px;
+    flex: 1;
+    min-width: 280px;
+    max-width: 350px;
     text-align: center;
-    transition: transform 0.3s ease;
 }
 
-.feature-card:hover {
-    transform: translateY(-5px);
+.flow-arrow {
+    font-size: 2rem;
+    color: #1f6feb;
+    margin: 0 10px;
 }
 
-.feature-card h3 {
+.agent-card h3 {
     color: #f0e4e4;
     font-size: 1.5rem;
     margin-bottom: 15px;
 }
 
-.feature-card p {
+.agent-card p {
     color: #c7c4c4;
 }
 
+/* Seção de Processo */
+.process-section {
+    margin-bottom: 80px;
+}
+
+.process-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #f0e4e4;
+}
+
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.step-card {
+    background: #444444;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.step-number {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f6feb;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.step-card h4 {
+    color: #f0e4e4;
+    font-size: 1.3rem;
+    margin: 15px 0;
+}
+
+.step-card p {
+    color: #c7c4c4;
+}
+
+/* Seção de Tecnologias */
+.tech-section {
+    margin-bottom: 80px;
+}
+
+.tech-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #f0e4e4;
+}
+
+.tech-stack {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.tech-item {
+    background: #444444;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.tech-item h4 {
+    color: #f0e4e4;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.tech-item p {
+    color: #c7c4c4;
+}
+
+/* CTA Section */
 .cta-section {
     text-align: center;
     margin: 60px 0;
@@ -98,25 +203,7 @@ body {
     background: #1a5cc6;
 }
 
-.about-section {
-    text-align: center;
-    margin: 60px 0;
-}
-
-.about-section h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #f0e4e4;
-}
-
-.about-section p {
-    font-size: 1.1rem;
-    color: #c7c4c4;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-/* Estilos responsivos */
+/* Responsividade */
 @media (max-width: 768px) {
     .landing-header h1 {
         font-size: 2.5rem;
@@ -126,12 +213,26 @@ body {
         font-size: 1.2rem;
     }
     
-    .features {
+    .agent-flow {
+        flex-direction: column;
+    }
+    
+    .flow-arrow {
+        transform: rotate(90deg);
+        margin: 20px 0;
+    }
+    
+    .agent-card {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .process-steps {
         grid-template-columns: 1fr;
     }
     
-    .cta-section h2 {
-        font-size: 2rem;
+    .tech-stack {
+        grid-template-columns: 1fr;
     }
 }
 
