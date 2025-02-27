@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib import messages
 import markdown2
 
+from .crew import NewsCrew
 from ..models import Noticia
 
 logger = logging.getLogger(__name__)
