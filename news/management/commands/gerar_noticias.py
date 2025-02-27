@@ -2,6 +2,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from news.crewai.noticias import Noticias
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +16,23 @@ class Command(BaseCommand):
             default=1,
             help='Quantidade de notícias a serem geradas'
         )
+        parser.add_argument(
+            '--ignorar-erros',
+            action='store_true',
+            help='Continuar mesmo se houver erros de API'
+        )
 
     def handle(self, *args, **options):
         quantidade = options['quantidade']
+        ignorar_erros = options['ignorar_erros']
+        
+        # Verificar se a chave da API está configurada
+        serper_api_key = os.getenv('SERPER_API_KEY')
+        if not serper_api_key:
+            self.stdout.write(
+                self.style.WARNING('AVISO: SERPER_API_KEY não está configurada. A geração de notícias pode falhar.')
+            )
+        
         self.stdout.write(self.style.SUCCESS(f'Iniciando geração de {quantidade} notícia(s)...'))
         
         gerador = Noticias()
@@ -50,12 +65,20 @@ class Command(BaseCommand):
                     self.stdout.write(
                         self.style.ERROR(f'Falha ao gerar notícia {i+1}')
                     )
+            except KeyboardInterrupt:
+                self.stdout.write(self.style.WARNING('Operação interrompida pelo usuário.'))
+                break
             except Exception as e:
                 falhas += 1
                 logger.error(f"Erro ao gerar notícia {i+1}: {str(e)}", exc_info=True)
                 self.stdout.write(
                     self.style.ERROR(f'Erro ao gerar notícia {i+1}: {str(e)}')
                 )
+                if not ignorar_erros:
+                    self.stdout.write(
+                        self.style.WARNING('Interrompendo devido a erro. Use --ignorar-erros para continuar mesmo com erros.')
+                    )
+                    break
         
         self.stdout.write(
             self.style.SUCCESS(
