@@ -3,7 +3,6 @@ from django.utils import timezone
 from django.contrib import messages
 import markdown2
 
-from .news_crew import NewsCrew
 from ..models import Noticia
 
 logger = logging.getLogger(__name__)
@@ -11,11 +10,6 @@ logger = logging.getLogger(__name__)
 class Noticias:
     def __init__(self):
         self.noticias = []
-
-    def adicionar_noticia(self, noticia):
-        """Adiciona uma notícia à lista de notícias."""
-        self.noticias.append(noticia)
-        return noticia
 
     def obter_todas_noticias(self):
         """Retorna todas as notícias armazenadas."""
