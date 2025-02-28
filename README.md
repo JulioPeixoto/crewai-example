@@ -5,5 +5,5 @@
   <li>crew ai</li>
   <li>langchain</li>
   <li>heroku</li>
-  <li>neondb sqli</li>
+  <li>neondb sql</li>
 </ol>
