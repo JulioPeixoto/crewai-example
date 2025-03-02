@@ -2,35 +2,68 @@
 import logging
 import time
 from typing import ClassVar
+import hashlib
+import json
+import os
+from datetime import datetime, timedelta
 
 # Imports de terceiros
 from crewai.tools import BaseTool
 from serpapi import GoogleSearch
+from django.core.cache import cache
 
 # Imports locais
 from api.settings import SERPER_API_KEY
 
 logger = logging.getLogger(__name__)
 
+# Cache local para evitar chamadas repetidas à API
+SEARCH_CACHE = {}
+MAX_CACHE_SIZE = 50  # Limitar o tamanho do cache
+CACHE_EXPIRY = 3600  # Cache válido por 1 hora (em segundos)
 
 class GoogleSearchWrapper(BaseTool):
     name: str = "Web Search"
-    description: str = "Pesquisa na web usando Google Search"
+    description: str = "Pesquisa na web usando Google Search. Use apenas para informações essenciais e evite múltiplas consultas similares."
     api_key: ClassVar[str] = SERPER_API_KEY
-    max_retries: ClassVar[int] = 3
+    max_retries: ClassVar[int] = 2  
     delay_between_retries: ClassVar[int] = 2
+    max_daily_searches: ClassVar[int] = 10 
+    searches_today: ClassVar[int] = 0
+    last_reset_date: ClassVar[str] = None
 
     def _run(self, query: str) -> str:
         logger.info("=== Iniciando GoogleSearchWrapper ===")
-        logger.info(f"Query recebida: {query}")
-        logger.info(f"Tipo da query: {type(query)}")
-        logger.info(f"API Key presente: {'Sim' if self.api_key else 'Não'}")
+        
+        self._check_daily_limit_reset()
+        
+        if self.searches_today >= self.max_daily_searches:
+            logger.warning(f"Limite diário de buscas atingido ({self.max_daily_searches}). Retornando mensagem de limite.")
+            return "LIMITE DE BUSCAS ATINGIDO: O número máximo de buscas diárias foi alcançado. Por favor, use as informações já disponíveis ou tente novamente amanhã."
         
         if isinstance(query, dict) and 'description' in query:
             logger.info("Query é um dicionário, extraindo description")
             query = query['description']
-            logger.info(f"Query após extração: {query}")
-            
+        
+        normalized_query = self._normalize_query(query)
+        
+        cache_key = f"google_search_{hashlib.md5(normalized_query.encode()).hexdigest()}"
+        cached_result = cache.get(cache_key)
+        
+        if cached_result:
+            logger.info(f"Resultado encontrado no cache Django para query: {normalized_query[:50]}...")
+            return cached_result
+        
+        if normalized_query in SEARCH_CACHE:
+            cache_time, result = SEARCH_CACHE[normalized_query]
+            # Verificar se o cache ainda é válido
+            if datetime.now() - cache_time < timedelta(seconds=CACHE_EXPIRY):
+                logger.info(f"Resultado encontrado no cache local para query: {normalized_query[:50]}...")
+                return result
+        
+        self.__class__.searches_today += 1
+        logger.info(f"Busca {self.searches_today} de {self.max_daily_searches} hoje")
+        
         for attempt in range(self.max_retries):
             try:
                 logger.info(f"Tentativa {attempt + 1} de {self.max_retries}")
@@ -38,22 +71,16 @@ class GoogleSearchWrapper(BaseTool):
                 search_params = {
                     "q": query,
                     "api_key": self.api_key,
-                    "num": 1
+                    "num": 1  # Reduzido para apenas 1 resultado
                 }
-                logger.info(f"Parâmetros da busca: {search_params}")
                 
                 search = GoogleSearch(search_params)
-                logger.info("Objeto GoogleSearch criado com sucesso")
-                
                 results = search.get_dict()
-                logger.info("Resultados obtidos da API")
                 
                 if "error" in results:
                     error_msg = f"Erro na API do Google: {results['error']}"
                     logger.error(error_msg)
                     raise Exception(error_msg)
-                
-                logger.info(f"Número de resultados orgânicos: {len(results.get('organic_results', []))}")
                 
                 formatted_results = []
                 for result in results.get("organic_results", []):
@@ -62,8 +89,15 @@ class GoogleSearchWrapper(BaseTool):
                     snippet = result.get("snippet", "Sem descrição")
                     formatted_results.append(f"Título: {title}\nLink: {link}\nDescrição: {snippet}\n")
                 
-                logger.info("Resultados formatados com sucesso")
-                return "\n".join(formatted_results)
+                result_text = "\n".join(formatted_results) if formatted_results else "Nenhum resultado encontrado para esta consulta."
+                
+                # Armazenar no cache Django (30 minutos)
+                cache.set(cache_key, result_text, 1800)
+                
+                # Armazenar no cache local
+                self._update_local_cache(normalized_query, result_text)
+                
+                return result_text
             
             except Exception as e:
                 logger.error(f"Erro na tentativa {attempt + 1}: {str(e)}")
@@ -73,4 +107,30 @@ class GoogleSearchWrapper(BaseTool):
                     time.sleep(wait_time)
                     continue
                 logger.error(f"Todas as tentativas falharam. Último erro: {str(e)}")
-                raise
+                return f"Erro na busca: {str(e)}. Por favor, tente uma consulta diferente ou use as informações já disponíveis."
+
+    def _normalize_query(self, query):
+        """Normaliza a query para reduzir buscas duplicadas"""
+        # Remover espaços extras e converter para minúsculas
+        normalized = ' '.join(query.lower().split())
+        return normalized
+    
+    def _update_local_cache(self, query, result):
+        """Atualiza o cache local, mantendo o tamanho máximo"""
+        # Adicionar novo resultado
+        SEARCH_CACHE[query] = (datetime.now(), result)
+        
+        # Limitar o tamanho do cache
+        if len(SEARCH_CACHE) > MAX_CACHE_SIZE:
+            # Remover o item mais antigo
+            oldest_query = min(SEARCH_CACHE.keys(), key=lambda k: SEARCH_CACHE[k][0])
+            del SEARCH_CACHE[oldest_query]
+    
+    def _check_daily_limit_reset(self):
+        """Verifica e reseta o contador diário se necessário"""
+        today = datetime.now().strftime('%Y-%m-%d')
+        
+        if self.last_reset_date != today:
+            logger.info(f"Resetando contador diário de buscas. Último reset: {self.last_reset_date}, Hoje: {today}")
+            self.__class__.searches_today = 0
+            self.__class__.last_reset_date = today
