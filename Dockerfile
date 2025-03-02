@@ -20,7 +20,10 @@ FROM python:3.11-slim
 # Configurar variáveis de ambiente
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/root/.local/bin:$PATH"
+    PATH="/root/.local/bin:$PATH" \
+    DJANGO_SETTINGS_MODULE=api.settings \
+    DEBUG=False \
+    PYTHONOPTIMIZE=2
 
 # Instalar dependências do sistema necessárias
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -45,11 +48,17 @@ RUN if [ -f crontab ]; then \
     crontab /etc/cron.d/scheduler-cron; \
     fi
 
-# Tornar o script scheduler.sh executável
-RUN chmod +x scheduler.sh
+# Tornar os scripts executáveis
+RUN chmod +x scheduler.sh scheduler-entrypoint.sh
+
+# Criar diretórios para arquivos estáticos e mídia
+RUN mkdir -p /app/staticfiles /app/media
+
+# Coletar arquivos estáticos
+RUN python manage.py collectstatic --noinput
 
 # Expor a porta que o Django usa
 EXPOSE 8000
 
 # Comando para iniciar a aplicação
-CMD ["gunicorn", "api.wsgi:application", "--bind", "0.0.0.0:8000"] 
+CMD ["gunicorn", "api.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "2", "--timeout", "60"] 

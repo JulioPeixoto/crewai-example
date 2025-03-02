@@ -1,60 +1,84 @@
 tasks:
   - id: "pesquisa_noticias"
-    name: "Pesquisar Notícias do Dia"
+    name: "Pesquisar Notícias da Semana"
     agent: news_researcher
-    description: "Pesquisar uma notícia relevante de tecnologia do dia {{ data|date:'Y-m-d'|safe }} e criar 5 ângulos diferentes para ela. Priorize uma fonte confiável e uma notícia impactante do ano de 2025 que possa gerar múltiplos desdobramentos."
-    expected_output: "Uma notícia principal com 5 ângulos diferentes de análise, incluindo: título principal, fonte, data, e os diferentes aspectos a serem explorados."
+    description: "Pesquisar 5 notícias relevantes de tecnologia da semana atual. IMPORTANTE: Faça buscas eficientes para encontrar notícias diversas e relevantes de diferentes áreas da tecnologia. Cada notícia deve ser de uma fonte confiável, incluir título, data de publicação e URL da fonte. Priorize notícias recentes e impactantes."
+    expected_output: "Lista com 5 notícias diferentes de tecnologia da semana atual, cada uma contendo: título, fonte, data de publicação e URL."
     tools: ["web_search"]
     context: []
 
   - id: "pesquisa_tendencias"
     name: "Análise de Tendências"
     agent: news_researcher
-    description: "Analisar as tendências tecnológicas emergentes relacionadas à notícia principal e seus desdobramentos para o ano de 2025."
-    expected_output: "Análise contextual das tendências identificadas na notícia principal e seus desdobramentos, com foco em impactos futuros."
-    tools: ["web_search"]
+    description: "Analisar as tendências tecnológicas emergentes relacionadas às 5 notícias encontradas. IMPORTANTE: Use apenas as informações já obtidas na pesquisa anterior e seu conhecimento existente, evitando novas buscas."
+    expected_output: "Breve análise contextual das tendências identificadas nas notícias, com foco em impactos futuros."
+    tools: []
     context: ["pesquisa_noticias"]
 
   - id: "redigir_noticias"
     name: "Redigir Notícias"
     agent: news_writer
-    description: "Criar 5 artigos em markdown a partir da notícia principal e seus diferentes ângulos para {{ data|date:'Y-m-d'|safe }}. Cada artigo deve explorar um aspecto diferente da notícia principal."
+    description: "Criar 5 artigos em markdown a partir das 5 notícias diferentes encontradas. Cada artigo deve apresentar a notícia de forma clara e informativa, incluindo título, data e fonte original. Use apenas as informações já obtidas nas pesquisas anteriores."
     expected_output: |
-      # Notícias de Tecnologia do Dia
+      # Notícias de Tecnologia da Semana
 
-      ## [Título da Notícia Principal]
-      [Texto explorando o primeiro ângulo]
-      Fonte: [link]
+      ## [Título da Notícia 1]
+      [Texto da notícia 1]
+      Fonte: [nome da fonte] - [link]
       Data: [data_publicacao]
 
-      ## [Título do Desdobramento 1]
-      [Texto explorando o segundo ângulo]
+      ## [Título da Notícia 2]
+      [Texto da notícia 2]
+      Fonte: [nome da fonte] - [link]
+      Data: [data_publicacao]
 
-      ## [Título do Desdobramento 2]
-      [Texto explorando o terceiro ângulo]
+      ## [Título da Notícia 3]
+      [Texto da notícia 3]
+      Fonte: [nome da fonte] - [link]
+      Data: [data_publicacao]
 
-      ## [Título do Desdobramento 3]
-      [Texto explorando o quarto ângulo]
+      ## [Título da Notícia 4]
+      [Texto da notícia 4]
+      Fonte: [nome da fonte] - [link]
+      Data: [data_publicacao]
 
-      ## [Título do Desdobramento 4]
-      [Texto explorando o quinto ângulo]
+      ## [Título da Notícia 5]
+      [Texto da notícia 5]
+      Fonte: [nome da fonte] - [link]
+      Data: [data_publicacao]
 
     context: ["pesquisa_noticias"]
 
   - id: "revisar_conteudo"
     name: "Revisar e Consolidar"
     agent: editor
-    description: "Revisar, formatar e consolidar os 5 artigos em um único artigo coeso em markdown, adequado para exibição web.
-    Cada artigo deve ter no mínimo 3 parágrafos, mas o tamanho deve variar de acordo com a relevância do ângulo explorado."
+    description: "Revisar, formatar e consolidar os 5 artigos em um único documento coeso em markdown, adequado para exibição web. Cada notícia deve ter título, conteúdo, data e fonte claramente identificados."
     expected_output: |
-      <h1>Notícias de Tecnologia</h1>
+      <h1>Notícias de Tecnologia da Semana</h1>
 
-      <h2>[Título Principal]</h2>
-      <p>[Texto principal]</p>
+      <h2>[Título da Notícia 1]</h2>
+      <p>[Texto da notícia 1]</p>
       <p>[Data da publicação]</p>
       <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
 
-      <h2>[Título do Desdobramento]</h2>
-      <p>[Texto do desdobramento]</p>
+      <h2>[Título da Notícia 2]</h2>
+      <p>[Texto da notícia 2]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
+
+      <h2>[Título da Notícia 3]</h2>
+      <p>[Texto da notícia 3]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
+
+      <h2>[Título da Notícia 4]</h2>
+      <p>[Texto da notícia 4]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
+
+      <h2>[Título da Notícia 5]</h2>
+      <p>[Texto da notícia 5]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
 
     context: ["redigir_noticias"]
