@@ -19,8 +19,10 @@ services:
       - POSTGRES_HOST=db
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - SERPER_API_KEY=${SERPER_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
     depends_on:
       - db
+      - redis
     networks:
       - app-network
     healthcheck:
@@ -48,6 +50,68 @@ services:
       timeout: 5s
       retries: 5
 
+  # Serviço Redis para o Celery
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Serviço Celery Worker
+  celery_worker:
+    build: .
+    restart: always
+    command: celery -A api worker --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=db
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SERPER_API_KEY=${SERPER_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+      - web
+    networks:
+      - app-network
+
+  # Serviço Celery Beat para tarefas agendadas
+  celery_beat:
+    build: .
+    restart: always
+    command: celery -A api beat --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=db
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SERPER_API_KEY=${SERPER_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+      - celery_worker
+    networks:
+      - app-network
+
   # Serviço de agendamento para gerar notícias automaticamente
   scheduler:
     build: .
@@ -66,6 +130,7 @@ services:
       - POSTGRES_HOST=db
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - SERPER_API_KEY=${SERPER_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
     depends_on:
       - db
       - web
@@ -79,4 +144,5 @@ networks:
 volumes:
   postgres_data:
   static_volume:
-  media_volume: 
+  media_volume:
+  redis_data: 

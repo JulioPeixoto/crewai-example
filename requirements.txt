@@ -10,3 +10,6 @@ markdown2
 python-dotenv
 uvicorn
 whitenoise
+celery==5.3.6
+redis==5.0.1
+django-celery-beat==2.5.0
