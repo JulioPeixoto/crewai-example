@@ -52,7 +52,6 @@ jobs:
       - name: Add Heroku Remote
         run: |
           git remote add origin https://github.com/JulioRaf4/crewai-example
-          heroku git:remote -a crewai-example
           git remote -v
  
       - name: Push to Heroku
