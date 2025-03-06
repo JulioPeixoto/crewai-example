@@ -33,6 +33,11 @@ jobs:
         with:
           fetch-depth: 0
       
+      - name: Add Heroku Remote
+        run: |
+          heroku git:remote -a crewai-example
+          git remote -v
+
       - name: Install Heroku CLI
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
