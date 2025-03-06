@@ -54,11 +54,6 @@ jobs:
           heroku git:remote -a crewai-example
           git remote -v
 
-      - name: Remove existing origin (if any) and add GitHub origin
-        run: |
-          git remote add origin https://github.com/JulioRaf4/crewai-example.git
-          git remote -v
-
       - name: Verificar remotos Git
         run: |
           git remote -v
