@@ -42,6 +42,11 @@ jobs:
           git remote add heroku https://git.heroku.com/crewai-example.git
           git remote -v
 
+      - name: Configure Git Credentials
+        run: |
+          git config --global credential.helper store
+          echo "https://:${{ secrets.HEROKU_API_KEY }}@git.heroku.com" > ~/.git-credentials
+
       - name: Push to Heroku
         run: |
           git push heroku main:main --force
