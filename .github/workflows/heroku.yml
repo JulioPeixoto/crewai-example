@@ -33,10 +33,6 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Add Heroku Remote
-        run: |
-          heroku git:remote -a crewai-example
-          git remote -v
 
       - name: Install Heroku CLI
         run: |
@@ -54,6 +50,11 @@ jobs:
           git config --global user.email "${{ secrets.HEROKU_EMAIL }}"
           git config --global user.name "GitHub Actions"
  
+      - name: Add Heroku Remote
+        run: |
+          heroku git:remote -a crewai-example
+          git remote -v
+
       - name: Push to Heroku
         run: |
           git push heroku main --force
