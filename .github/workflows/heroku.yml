@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -24,25 +27,34 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
-
+        with:
+          fetch-depth: 0
+      
       - name: Install Heroku CLI
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Login to Heroku
+      - name: Authenticate with Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          heroku login --api-key $HEROKU_API_KEY
+          heroku auth:token
+          heroku auth:whoami
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "${{ secrets.HEROKU_EMAIL }}"
+          git config --global user.name "GitHub Actions"
+      
       - name: Add Heroku Remote
         run: |
+          git remote add origin https://github.com/JulioRaf4/crewai-example
           heroku git:remote -a crewai-example
-
+          git remote -v
+ 
       - name: Push to Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          git push heroku main:main --force
+          git push heroku main --force
