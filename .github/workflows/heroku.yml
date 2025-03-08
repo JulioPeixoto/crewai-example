@@ -38,4 +38,6 @@ jobs:
 
       - name: Deploy to Heroku
         run: |
+          git fetch heroku main
+          git pull heroku main --rebase
           git push --force heroku main
