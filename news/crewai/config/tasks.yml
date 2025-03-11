@@ -2,7 +2,7 @@ tasks:
   - id: "pesquisa_noticias"
     name: "Pesquisar Notícias da Semana"
     agent: news_researcher
-    description: "Pesquisar 5 notícias relevantes de tecnologia da semana atual. IMPORTANTE: Faça buscas eficientes para encontrar notícias diversas e relevantes de diferentes áreas da tecnologia. Cada notícia deve ser de uma fonte confiável, incluir título, data de publicação e URL da fonte. Priorize notícias recentes e impactantes."
+    description: "Pesquisar 5 notícias relevantes de tecnologia a partir de {{ data|date:'Y-m-d'|safe }}. IMPORTANTE: Faça buscas eficientes para encontrar notícias diversas e relevantes de diferentes áreas da tecnologia. Cada notícia deve ser de uma fonte confiável, incluir título, data de publicação e URL da fonte. Priorize notícias recentes e impactantes."
     expected_output: "Lista com 5 notícias diferentes de tecnologia da semana atual, cada uma contendo: título, fonte, data de publicação e URL."
     tools: ["web_search"]
     context: []
@@ -18,7 +18,7 @@ tasks:
   - id: "redigir_noticias"
     name: "Redigir Notícias"
     agent: news_writer
-    description: "Criar 5 artigos em markdown a partir das 5 notícias diferentes encontradas. Cada artigo deve apresentar a notícia de forma clara e informativa, incluindo título, data e fonte original. Use apenas as informações já obtidas nas pesquisas anteriores."
+    description: "Criar 5 artigos em markdown a partir das 5 notícias diferentes encontradas. Cada artigo deve apresentar a notícia de forma clara e informativa, incluindo título, data e fonte original. Use apenas as informações já obtidas nas pesquisas anteriores. As noticias devem ter tamanhos relacionados aos tamanhos das noticias do site, não crie noticias com tamanhos padrão."
     expected_output: |
       # Notícias de Tecnologia da Semana
 
@@ -52,7 +52,7 @@ tasks:
   - id: "revisar_conteudo"
     name: "Revisar e Consolidar"
     agent: editor
-    description: "Revisar, formatar e consolidar os 5 artigos em um único documento coeso em markdown, adequado para exibição web. Cada notícia deve ter título, conteúdo, data e fonte claramente identificados."
+    description: "Revisar, formatar e consolidar as 5 notícias em um único documento coeso em markdown, adequado para exibição web. Cada notícia deve ter título, conteúdo, data e fonte claramente identificados."
     expected_output: |
       <h1>Notícias de Tecnologia da Semana</h1>
 
