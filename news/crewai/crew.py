@@ -1,4 +1,3 @@
-# Imports da biblioteca padrão
 import logging
 import os
 from pprint import pformat
