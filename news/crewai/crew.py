@@ -1,21 +1,15 @@
 # Imports da biblioteca padrão
 import logging
 import os
-import time
 from pprint import pformat
-from typing import ClassVar
 
-# Imports de terceiros
 from crewai import Crew, Agent, Task
-from crewai.tools import BaseTool
 from django.utils import timezone
 from dotenv import load_dotenv
 import yaml
 
-# Imports locais
 from .tools.google_search import GoogleSearchWrapper
 
-# Configuração do logger do Django
 logger = logging.getLogger(__name__)
 
 load_dotenv()
@@ -111,11 +105,9 @@ class NewsCrew:
             logger.debug(f"Iniciando configuração das tarefas. Tipo de tasks_config: {type(self.tasks_config)}")
             logger.debug(f"Conteúdo de tasks_config: \n{pformat(self.tasks_config)}")
             
-            # Primeiro cria todas as tarefas
             for task_config in self.tasks_config['tasks']:                
                 agent = self.agents.get(task_config['agent'])
                 
-                # Substituir a variável de data na descrição
                 description = task_config['description'].replace(
                     "{{ data|date:'Y-m-d'|safe }}", 
                     self.data.strftime('%Y-%m-%d')
@@ -133,7 +125,7 @@ class NewsCrew:
                     agent=agent,
                     expected_output=task_config['expected_output'],
                     tools=task_tools,
-                    context=[]  # Contexto inicial vazio
+                    context=[]  
                 )
                 
                 self.tasks_map[task_config['id']] = task  
