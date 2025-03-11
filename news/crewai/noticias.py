@@ -75,4 +75,3 @@ class Noticias:
         except Exception as db_error:
             logger.error(f"Erro ao salvar notícia no banco: {str(db_error)}")
             raise
-
