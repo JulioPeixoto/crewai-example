@@ -18,34 +18,34 @@ tasks:
   - id: "redigir_noticias"
     name: "Redigir Notícias"
     agent: news_writer
-    description: "Criar 5 artigos em markdown a partir das 5 notícias diferentes encontradas. Cada artigo deve apresentar a notícia de forma clara e informativa, incluindo título, data e fonte original. Use apenas as informações já obtidas nas pesquisas anteriores. As noticias devem ter tamanhos relacionados aos tamanhos das noticias do site, não crie noticias com tamanhos padrão."
+    description: "Criar 5 artigos a partir das 5 notícias diferentes encontradas. Cada artigo deve apresentar a notícia de forma clara e informativa e densa, incluindo título, data e fonte original. Use apenas as informações já obtidas nas pesquisas anteriores. As noticias devem ter tamanhos relacionados aos tamanhos das noticias do site, não crie noticias com tamanhos padrão."
     expected_output: |
-      # Notícias de Tecnologia da Semana
+      <h1>Notícias de Tecnologia da Semana {{ data|date:'Y-m-d'|safe }}</h1>
 
-      ## [Título da Notícia 1]
-      [Texto da notícia 1]
-      Fonte: [nome da fonte] - [link]
-      Data: [data_publicacao]
+      <h2>[Título da Notícia 1]</h2>
+      <p>[Texto da notícia 1]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
 
-      ## [Título da Notícia 2]
-      [Texto da notícia 2]
-      Fonte: [nome da fonte] - [link]
-      Data: [data_publicacao]
+      <h2>[Título da Notícia 2]</h2>
+      <p>[Texto da notícia 2]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
 
-      ## [Título da Notícia 3]
-      [Texto da notícia 3]
-      Fonte: [nome da fonte] - [link]
-      Data: [data_publicacao]
+      <h2>[Título da Notícia 3]</h2>
+      <p>[Texto da notícia 3]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
 
-      ## [Título da Notícia 4]
-      [Texto da notícia 4]
-      Fonte: [nome da fonte] - [link]
-      Data: [data_publicacao]
+      <h2>[Título da Notícia 4]</h2>
+      <p>[Texto da notícia 4]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
 
-      ## [Título da Notícia 5]
-      [Texto da notícia 5]
-      Fonte: [nome da fonte] - [link]
-      Data: [data_publicacao]
+      <h2>[Título da Notícia 5]</h2>
+      <p>[Texto da notícia 5]</p>
+      <p>[Data da publicação]</p>
+      <p><small>Fonte: <a href="[link]" target="_blank">[fonte]</a></small></p>
 
     context: ["pesquisa_noticias"]
 
@@ -54,7 +54,7 @@ tasks:
     agent: editor
     description: "Revisar, formatar e consolidar as 5 notícias em um único documento coeso em markdown, adequado para exibição web. Cada notícia deve ter título, conteúdo, data e fonte claramente identificados."
     expected_output: |
-      <h1>Notícias de Tecnologia da Semana</h1>
+      <h1>Notícias de Tecnologia da Semana {{ data|date:'Y-m-d'|safe }}</h1>
 
       <h2>[Título da Notícia 1]</h2>
       <p>[Texto da notícia 1]</p>
