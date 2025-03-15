@@ -3,8 +3,6 @@ import logging
 import time
 from typing import ClassVar
 import hashlib
-import json
-import os
 from datetime import datetime, timedelta
 
 # Imports de terceiros
@@ -24,7 +22,7 @@ CACHE_EXPIRY = 3600  # Cache válido por 1 hora (em segundos)
 
 class GoogleSearchWrapper(BaseTool):
     name: str = "Web Search"
-    description: str = "Pesquisa na web usando Google Search. Use apenas para informações essenciais e evite múltiplas consultas similares."
+    description: str = "Pesquisa noticias de tecnologia na web usando Google Search. Use apenas para informações essenciais e evite múltiplas consultas similares."
     api_key: ClassVar[str] = SERPER_API_KEY
     max_retries: ClassVar[int] = 2  
     delay_between_retries: ClassVar[int] = 2

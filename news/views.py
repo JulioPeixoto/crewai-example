@@ -24,7 +24,7 @@ def index(request):
     page_number = request.GET.get("page", 1)
 
     noticias_list = (
-        Noticia.objects.all()
+        Noticia.objects.all().order_by("-data_publicacao")
     )
 
     paginator = Paginator(noticias_list, 10)
