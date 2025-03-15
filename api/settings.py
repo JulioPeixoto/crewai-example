@@ -169,6 +169,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+SERPER_API_KEY = os.getenv("SERPER_API_KEY")
 MODEL = "gpt-4o"
 
 # Configuração de arquivos estáticos

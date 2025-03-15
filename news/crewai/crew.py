@@ -5,15 +5,15 @@ from pprint import pformat
 from crewai import Crew, Agent, Task
 from django.utils import timezone
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 import yaml
 
 from .tools.google_search import GoogleSearchWrapper
+from api.settings import MODEL, OPENAI_API_KEY, SERPER_API_KEY
 
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-
-SERPER_API_KEY = os.getenv('SERPER_API_KEY')
 
 class NewsCrew:
     def __init__(self, data=None):
@@ -78,6 +78,12 @@ class NewsCrew:
     def setup_agents(self):
         self.agents = {}
         try:
+            llm = ChatOpenAI(
+                    model=MODEL, 
+                    temperature=0.7,
+                    api_key=OPENAI_API_KEY
+                    )
+            
             for agent_id, config in self.agents_config.items():
                 logger.info(f"Configurando agente: {agent_id}")
                 logger.debug(f"Configuração do agente {agent_id}: \n{pformat(config)}")
@@ -89,7 +95,8 @@ class NewsCrew:
                     backstory=config['backstory'],
                     verbose=True,
                     allow_delegation=False,
-                    tools=[self.tools['web_search']]
+                    tools=[self.tools['web_search']],
+                    llm=llm
                 )
             logger.info(f"Total de {len(self.agents)} agentes configurados")
             logger.debug(f"Agentes configurados: {list(self.agents.keys())}")

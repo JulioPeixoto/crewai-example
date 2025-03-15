@@ -6,6 +6,7 @@ django-heroku==0.3.1
 google-search-results
 gunicorn
 langchain-community
+langchain-openai
 markdown2
 python-dotenv
 uvicorn
