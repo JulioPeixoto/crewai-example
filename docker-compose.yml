@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Serviço principal da aplicação web
   web:
@@ -54,6 +52,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: always
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     networks:
@@ -68,9 +67,10 @@ services:
   celery_worker:
     build: .
     restart: always
-    command: celery -A api worker --loglevel=info
+    command: celery -A api worker --loglevel=info --concurrency=2 --max-memory-per-child=200000
     volumes:
-      - .:/app
+      - ./news:/app/news
+      - ./api:/app/api
     environment:
       - DEBUG=False
       - SECRET_KEY=${SECRET_KEY}
@@ -92,9 +92,10 @@ services:
   celery_beat:
     build: .
     restart: always
-    command: celery -A api beat --loglevel=info
+    command: celery -A api beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
-      - .:/app
+      - ./news:/app/news
+      - ./api:/app/api
     environment:
       - DEBUG=False
       - SECRET_KEY=${SECRET_KEY}
@@ -109,31 +110,6 @@ services:
       - db
       - redis
       - celery_worker
-    networks:
-      - app-network
-
-  # Serviço de agendamento para gerar notícias automaticamente
-  scheduler:
-    build: .
-    restart: always
-    command: bash /app/scheduler-entrypoint.sh
-    volumes:
-      - ./scheduler.sh:/app/scheduler.sh
-      - ./crontab:/app/crontab
-      - ./scheduler-entrypoint.sh:/app/scheduler-entrypoint.sh
-    environment:
-      - DEBUG=False
-      - SECRET_KEY=${SECRET_KEY}
-      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=db
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - SERPER_API_KEY=${SERPER_API_KEY}
-      - REDIS_URL=redis://redis:6379/0
-    depends_on:
-      - db
-      - web
     networks:
       - app-network
 

@@ -8,13 +8,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# Instalar dependências de compilação necessárias para psycopg2
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    python3-dev \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copiar apenas os arquivos necessários para instalar dependências
 COPY requirements.txt .
 
 # Instalar dependências em uma camada separada
 RUN pip install --no-cache-dir --user -r requirements.txt
 
-# Segunda etapa - imagem final
+# Segunda etapa - imagem final (mais leve)
 FROM python:3.11-slim
 
 # Configurar variáveis de ambiente
@@ -25,31 +32,23 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DEBUG=False \
     PYTHONOPTIMIZE=2
 
-# Instalar dependências do sistema necessárias
+# Instalar apenas as dependências do sistema absolutamente necessárias
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    cron \
+    libpq5 \
     curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /var/log/ \
-    && touch /var/log/cron.log
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # Copiar as dependências instaladas da etapa anterior
 COPY --from=builder /root/.local /root/.local
 
-# Copiar o código da aplicação
-COPY . .
-
-# Configurar o crontab
-RUN if [ -f crontab ]; then \
-    cp crontab /etc/cron.d/scheduler-cron && \
-    chmod 0644 /etc/cron.d/scheduler-cron && \
-    crontab /etc/cron.d/scheduler-cron; \
-    fi
-
-# Tornar os scripts executáveis
-RUN chmod +x scheduler.sh scheduler-entrypoint.sh
+# Copiar apenas os arquivos necessários para a aplicação
+COPY manage.py ./
+COPY api ./api
+COPY news ./news
+COPY static ./static
+COPY templates ./templates
 
 # Criar diretórios para arquivos estáticos e mídia
 RUN mkdir -p /app/staticfiles /app/media
@@ -60,5 +59,5 @@ RUN python manage.py collectstatic --noinput
 # Expor a porta que o Django usa
 EXPOSE 8000
 
-# Comando para iniciar a aplicação
-CMD ["gunicorn", "api.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "2", "--timeout", "60"] 
+# Comando para iniciar a aplicação com configurações otimizadas
+CMD ["gunicorn", "api.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "4", "--timeout", "60", "--keep-alive", "5", "--max-requests", "1000", "--max-requests-jitter", "50"] 
