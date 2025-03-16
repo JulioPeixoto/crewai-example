@@ -4,5 +4,10 @@
 # Recomendado agendar para rodar diariamente de manhã
 
 echo "Iniciando geração automática de notícias..."
-python manage.py gerar_noticias --quantidade=1 --ignorar-erros
+
+# Lista de sites para pesquisar
+SITES="wired.com engadget.com techcrunch.com theverge.com"
+
+python manage.py gerar_noticias --quantidade=1 --ignorar-erros --sites $SITES
+
 echo "Processo de geração de notícias concluído." 

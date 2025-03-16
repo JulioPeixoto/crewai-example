@@ -2,6 +2,7 @@ import logging
 from django.utils import timezone
 from django.contrib import messages
 import markdown2
+from typing import List, Optional
 
 from .crew import NewsCrew
 from ..models import Noticia
@@ -9,8 +10,11 @@ from ..models import Noticia
 logger = logging.getLogger(__name__)
 
 class Noticias:
-    def __init__(self):
+    def __init__(self, target_sites: Optional[List[str]] = None):
         self.noticias = []
+        self.target_sites = target_sites
+        if target_sites:
+            logger.info(f"Sites alvo configurados: {target_sites}")
 
     def obter_todas_noticias(self):
         """Retorna todas as notícias armazenadas."""
@@ -29,7 +33,7 @@ class Noticias:
         try:
             data_atual = timezone.now()
             
-            news_crew = NewsCrew(data=data_atual)
+            news_crew = NewsCrew(data=data_atual, target_sites=self.target_sites)
             crew_results = news_crew.run()            
 
             if not crew_results:
@@ -53,6 +57,11 @@ class Noticias:
             if request:
                 messages.error(request, f"Erro ao gerar notícias: {str(e)}")
             return None
+    
+    def adicionar_noticia(self, noticia):
+        """Adiciona uma notícia à lista de notícias."""
+        if noticia:
+            self.noticias.append(noticia)
     
     def _processar_resultado_crew(self, crew_results):
         """Processa o resultado do crew e retorna o conteúdo como string."""

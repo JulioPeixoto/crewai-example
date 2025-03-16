@@ -1,7 +1,7 @@
 # Imports da biblioteca padrão
 import logging
 import time
-from typing import ClassVar
+from typing import ClassVar, List, Optional
 import hashlib
 from datetime import datetime, timedelta
 
@@ -29,6 +29,13 @@ class GoogleSearchWrapper(BaseTool):
     max_daily_searches: ClassVar[int] = 10 
     searches_today: ClassVar[int] = 0
     last_reset_date: ClassVar[str] = None
+    target_sites: ClassVar[List[str]] = []
+
+    def __init__(self, target_sites: Optional[List[str]] = None):
+        super().__init__()
+        if target_sites:
+            self.__class__.target_sites = target_sites
+            logger.info(f"Sites alvo configurados: {target_sites}")
 
     def _run(self, query: str) -> str:
         logger.info("=== Iniciando GoogleSearchWrapper ===")
@@ -45,15 +52,21 @@ class GoogleSearchWrapper(BaseTool):
         
         normalized_query = self._normalize_query(query)
         
-        cache_key = f"google_search_{hashlib.md5(normalized_query.encode()).hexdigest()}"
+        # Adiciona os sites alvo à chave de cache para diferenciar resultados
+        sites_hash = ""
+        if self.target_sites:
+            sites_hash = hashlib.md5("".join(self.target_sites).encode()).hexdigest()[:8]
+            
+        cache_key = f"google_search_{sites_hash}_{hashlib.md5(normalized_query.encode()).hexdigest()}"
         cached_result = cache.get(cache_key)
         
         if cached_result:
             logger.info(f"Resultado encontrado no cache Django para query: {normalized_query[:50]}...")
             return cached_result
         
-        if normalized_query in SEARCH_CACHE:
-            cache_time, result = SEARCH_CACHE[normalized_query]
+        cache_key_local = f"{sites_hash}_{normalized_query}"
+        if cache_key_local in SEARCH_CACHE:
+            cache_time, result = SEARCH_CACHE[cache_key_local]
             # Verificar se o cache ainda é válido
             if datetime.now() - cache_time < timedelta(seconds=CACHE_EXPIRY):
                 logger.info(f"Resultado encontrado no cache local para query: {normalized_query[:50]}...")
@@ -69,8 +82,14 @@ class GoogleSearchWrapper(BaseTool):
                 search_params = {
                     "q": query,
                     "api_key": self.api_key,
-                    "num": 1  # Reduzido para apenas 1 resultado
+                    "num": 5  # Aumentado para 5 resultados
                 }
+                
+                # Adicionar sites específicos à consulta se fornecidos
+                if self.target_sites:
+                    site_query = " OR ".join([f"site:{site}" for site in self.target_sites])
+                    search_params["q"] = f"{query} ({site_query})"
+                    logger.info(f"Consulta modificada com sites alvo: {search_params['q'][:100]}...")
                 
                 search = GoogleSearch(search_params)
                 results = search.get_dict()
@@ -93,7 +112,7 @@ class GoogleSearchWrapper(BaseTool):
                 cache.set(cache_key, result_text, 1800)
                 
                 # Armazenar no cache local
-                self._update_local_cache(normalized_query, result_text)
+                self._update_local_cache(cache_key_local, result_text)
                 
                 return result_text
             
