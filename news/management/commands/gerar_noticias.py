@@ -21,10 +21,20 @@ class Command(BaseCommand):
             action='store_true',
             help='Continuar mesmo se houver erros de API'
         )
+        parser.add_argument(
+            '--sites',
+            nargs='+',
+            type=str,
+            help='Lista de sites para pesquisar notícias (ex: wired.com engadget.com)'
+        )
 
     def handle(self, *args, **options):
         quantidade = options['quantidade']
         ignorar_erros = options['ignorar_erros']
+        sites = options.get('sites')
+        
+        if sites:
+            self.stdout.write(self.style.SUCCESS(f'Sites alvo configurados: {sites}'))
         
         # Verificar se a chave da API está configurada
         serper_api_key = os.getenv('SERPER_API_KEY')
@@ -35,7 +45,7 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS(f'Iniciando geração de {quantidade} notícia(s)...'))
         
-        gerador = Noticias()
+        gerador = Noticias(target_sites=sites)
         
         # Corrigindo o método adicionar_noticia que está faltando
         if not hasattr(gerador, 'adicionar_noticia'):

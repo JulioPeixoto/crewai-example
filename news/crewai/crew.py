@@ -7,6 +7,7 @@ from django.utils import timezone
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 import yaml
+from typing import List, Optional
 
 from .tools.google_search import GoogleSearchWrapper
 from api.settings import MODEL, OPENAI_API_KEY, SERPER_API_KEY
@@ -16,11 +17,14 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 class NewsCrew:
-    def __init__(self, data=None):
+    def __init__(self, data=None, target_sites: Optional[List[str]] = None):
         self.tasks_map = {}
         self.data = data or timezone.now()
+        self.target_sites = target_sites
         try:
             logger.info("Iniciando NewsCrew")
+            if target_sites:
+                logger.info(f"Sites alvo configurados: {target_sites}")
             self.load_config()
             self.setup_tools()
             self.setup_agents()
@@ -56,7 +60,7 @@ class NewsCrew:
             if SERPER_API_KEY:
                 logger.info(f"Primeiros 5 caracteres da API key: {SERPER_API_KEY[:5]}")
             
-            search = GoogleSearchWrapper()
+            search = GoogleSearchWrapper(target_sites=self.target_sites)
             logger.info("GoogleSearchWrapper instanciado com sucesso")
             
             self.tools = {
