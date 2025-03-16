@@ -52,7 +52,7 @@ tasks:
   - id: "revisar_conteudo"
     name: "Revisar e Consolidar"
     agent: editor
-    description: "Revisar, formatar e consolidar as 5 notícias em um único documento coeso em markdown, adequado para exibição web. Cada notícia deve ter título, conteúdo, data e fonte claramente identificados."
+    description: "Revisar, formatar e consolidar as 5 notícias em um único documento coeso, adequado para exibição web. Cada notícia deve ter título, conteúdo, data e fonte claramente identificados. Você deve ter certeza que a saída devera ser começar com <h1>"
     expected_output: |
       <h1>Notícias de Tecnologia da Semana {{ data|date:'Y-m-d'|safe }}</h1>
 
