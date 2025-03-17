@@ -1,7 +1,8 @@
 services:
   # Serviço principal da aplicação web
   web:
-    build: .
+    build:
+      context: .
     restart: always
     ports:
       - "8000:8000"
@@ -19,8 +20,10 @@ services:
       - SERPER_API_KEY=${SERPER_API_KEY}
       - REDIS_URL=redis://redis:6379/0
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - app-network
     healthcheck:
@@ -29,6 +32,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
 
   # Serviço de banco de dados PostgreSQL
   db:
@@ -47,6 +55,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: 256M
 
   # Serviço Redis para o Celery
   redis:
@@ -62,15 +75,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 128M
 
   # Serviço Celery Worker
   celery_worker:
-    build: .
+    build:
+      context: .
+      target: production
     restart: always
     command: celery -A api worker --loglevel=info --concurrency=2 --max-memory-per-child=200000
     volumes:
       - ./news:/app/news
       - ./api:/app/api
+      - media_volume:/app/media
     environment:
       - DEBUG=False
       - SECRET_KEY=${SECRET_KEY}
@@ -82,15 +103,25 @@ services:
       - SERPER_API_KEY=${SERPER_API_KEY}
       - REDIS_URL=redis://redis:6379/0
     depends_on:
-      - db
-      - redis
-      - web
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      web:
+        condition: service_started
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
 
   # Serviço Celery Beat para tarefas agendadas
   celery_beat:
-    build: .
+    build:
+      context: .
+      target: production
     restart: always
     command: celery -A api beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
@@ -107,11 +138,19 @@ services:
       - SERPER_API_KEY=${SERPER_API_KEY}
       - REDIS_URL=redis://redis:6379/0
     depends_on:
-      - db
-      - redis
-      - celery_worker
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      celery_worker:
+        condition: service_started
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 128M
 
 networks:
   app-network:
