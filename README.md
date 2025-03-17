@@ -76,8 +76,8 @@ Pesquisar Notícias → Análise de Tendências → Redigir Notícias → Revisa
 1. **Clone o repositório**
 
 ```bash
-git clone https://github.com/seu-usuario/minimal-newsl.git
-cd minimal-newsl
+git clone https://github.com/seu-usuario/crewai-example.git
+cd crewai-example
 ```
 
 2. **Configure as variáveis de ambiente**
