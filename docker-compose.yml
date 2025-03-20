@@ -85,7 +85,6 @@ services:
   celery_worker:
     build:
       context: .
-      target: production
     restart: always
     command: celery -A api worker --loglevel=info --concurrency=2 --max-memory-per-child=200000
     volumes:
@@ -121,7 +120,6 @@ services:
   celery_beat:
     build:
       context: .
-      target: production
     restart: always
     command: celery -A api beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
