@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS builder
+FROM python:3.13.3-slim AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -17,7 +17,7 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir --user -r requirements.txt
 
-FROM python:3.11-slim
+FROM python:3.13.3-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
